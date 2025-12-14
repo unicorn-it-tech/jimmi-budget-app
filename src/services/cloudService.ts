@@ -1,3 +1,4 @@
+
 export interface CloudData {
     [key: string]: any;
 }
@@ -15,11 +16,12 @@ export const cloudService = {
                 body: JSON.stringify(data),
             });
 
-            // Controllo se la risposta è valida JSON (evita crash se ritorna HTML di errore/fallback)
             const contentType = response.headers.get("content-type");
             if (contentType && contentType.indexOf("application/json") === -1) {
-                // Se non è JSON, probabilmente è una pagina HTML di errore o fallback (404)
-                throw new Error(`API returned non-JSON response (${response.status}). Are you running locally without 'vercel dev'?`);
+                // Leggiamo il testo della risposta per capire cosa sta tornando (spesso è l'HTML della home o una pagina di errore Vercel)
+                const text = await response.text();
+                console.error("Non-JSON Response Body:", text.substring(0, 500)); // Logga i primi 500 caratteri
+                throw new Error(`API returned non-JSON response (${response.status}). Check console for details.`);
             }
 
             if (!response.ok) {
@@ -36,10 +38,11 @@ export const cloudService = {
         try {
             const response = await fetch(API_ENDPOINT);
             
-            // Check speciale per ambiente locale o errori di routing
             const contentType = response.headers.get("content-type");
+            
+            // Gestione specifica per 404 o risposte non JSON
             if (response.status === 404 || (contentType && contentType.indexOf("application/json") === -1)) {
-                console.warn('API endpoint not accessible or returned HTML (Local/Offline mode active).');
+                console.warn('API endpoint not accessible (404) or returned HTML. This usually means the API function is not deployed correctly or you are running locally without "vercel dev".');
                 return null;
             }
 
@@ -52,7 +55,6 @@ export const cloudService = {
             return data;
         } catch (error) {
             console.error('Cloud load failed:', error);
-            // Non lanciare errore qui per permettere il caricamento offline
             return null;
         }
     },

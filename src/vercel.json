@@ -1,13 +1,12 @@
 {
   "rewrites": [
     {
+      "source": "/api/:match*",
+      "destination": "/api/:match*"
+    },
+    {
       "source": "/((?!api/|_next/|static/|favicon.ico).*)",
       "destination": "/index.html"
     }
-  ],
-  "functions": {
-    "api/*.js": {
-      "runtime": "nodejs18.x"
-    }
-  }
+  ]
 }

@@ -17,10 +17,11 @@ export const cloudService = {
             });
 
             if (!response.ok) {
-                throw new Error(`Error saving data: ${response.statusText}`);
+                const errorText = await response.text();
+                throw new Error(`Error saving data: ${response.status} ${response.statusText} - ${errorText}`);
             }
         } catch (error) {
-            console.error('Cloud save failed:', error);
+            console.error('Cloud save failed detailed:', error);
             throw error;
         }
     },
@@ -31,12 +32,12 @@ export const cloudService = {
             
             // Se siamo in locale senza 'vercel dev' o l'API non esiste, gestiamo l'errore gracefully
             if (response.status === 404) {
-                console.warn('API endpoint not found. Running in offline mode?');
+                console.warn('API endpoint not found (404). Check vercel.json routing or offline mode.');
                 return null;
             }
 
             if (!response.ok) {
-                throw new Error(`Error loading data: ${response.statusText}`);
+                throw new Error(`Error loading data: ${response.status} ${response.statusText}`);
             }
 
             const data = await response.json();
@@ -44,6 +45,21 @@ export const cloudService = {
         } catch (error) {
             console.error('Cloud load failed:', error);
             return null;
+        }
+    },
+
+    async clearData(): Promise<void> {
+        try {
+            const response = await fetch(API_ENDPOINT, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error clearing data: ${response.statusText}`);
+            }
+        } catch (error) {
+            console.error('Cloud clear failed:', error);
+            throw error;
         }
     }
 };

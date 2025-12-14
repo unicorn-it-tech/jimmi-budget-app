@@ -29,6 +29,15 @@ export default async function handler(request) {
       });
     }
 
+    if (request.method === 'DELETE') {
+      // Cancella i dati da Redis (Reset Totale)
+      await kv.del(key);
+      return new Response(JSON.stringify({ success: true, message: 'Database cleared' }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    }
+
     return new Response('Method not allowed', { status: 405 });
   } catch (error) {
     console.error(error);

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { MoonIcon, SunIcon, CalendarIcon, CashIcon, TrendingUpIcon, DesktopComputerIcon, ScaleIcon, LinkIcon, UsersIcon, DocumentReportIcon, MenuIcon, XIcon, ChevronDownIcon, PlusCircleIcon, PencilIcon, TrashIcon, DownloadIcon, CloudUploadIcon } from './components/icons';
 import MonthlyPlanner from './components/MonthlyPlanner';
@@ -9,6 +10,7 @@ import TabellaPressione from './components/TabellaPressione';
 import Competitors from './components/Competitors';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { CloudSync } from './components/CloudSync';
+import { cloudService } from './services/cloudService';
 import type { Apartment, MonthlyData, BudgetDataForMonth, ForecastData, SavedActualData, ForecastInputs } from './types';
 
 // Mappa delle icone per poterle salvare/caricare dal JSON
@@ -126,7 +128,7 @@ const PageContent: React.FC<PageContentProps> = ({
     onAddApartment, 
     onRemoveApartment, 
     onPreviousYear, 
-    onNextYear,
+    onNextYear, 
     onBudgetUpdate,
     forecastData,
     budgetDataForMonitoring,
@@ -264,13 +266,14 @@ interface SidebarProps {
     openDeleteModal: (name: string) => void;
     onExport: () => void;
     onImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onReset: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
     navigationData, openMacroClusters, openClusters, activePage,
     toggleMacroCluster, toggleCluster, setActivePage, setIsSidebarOpen,
     handleCreateCluster, openRenameModal, openDeleteModal,
-    onExport, onImport
+    onExport, onImport, onReset
 }) => {
     return (
         <aside className="flex flex-col w-64 h-full px-4 py-8 bg-blue-800 dark:bg-gray-800 border-r border-blue-900 dark:border-gray-700 overflow-y-auto">
@@ -348,11 +351,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                 </nav>
             </div>
 
-            {/* Import / Export Footer with Cloud Status */}
-            <div className="mt-auto pt-6 px-2 border-t border-blue-900 dark:border-gray-700">
+            {/* Import / Export / Reset Footer */}
+            <div className="mt-auto pt-6 px-2 border-t border-blue-900 dark:border-gray-700 space-y-3">
                 <CloudSync />
                 
-                <h3 className="text-xs font-bold text-blue-300 dark:text-gray-500 uppercase tracking-wider mb-2 mt-4 px-2">Gestione Backup</h3>
+                <h3 className="text-xs font-bold text-blue-300 dark:text-gray-500 uppercase tracking-wider px-2">Gestione Backup</h3>
                 <div className="flex flex-col gap-2">
                     <button 
                         onClick={onExport}
@@ -366,6 +369,13 @@ const Sidebar: React.FC<SidebarProps> = ({
                         RIPRISTINA JSON
                         <input type="file" onChange={onImport} className="hidden" accept=".json" />
                     </label>
+                    <button 
+                        onClick={onReset}
+                        className="w-full flex items-center justify-center gap-2 bg-red-600/80 hover:bg-red-500 dark:bg-red-900/50 dark:hover:bg-red-800 text-white py-2 px-4 rounded-lg text-xs font-bold transition-colors mt-2"
+                    >
+                        <TrashIcon className="w-4 h-4" />
+                        RESET TOTALE
+                    </button>
                 </div>
             </div>
         </aside>
@@ -848,6 +858,26 @@ const App: React.FC = () => {
         }
     };
 
+    const handleFullReset = async () => {
+        if (confirm("ATTENZIONE: Stai per cancellare TUTTI i dati salvati, sia sul tuo computer che sul Cloud (se connesso). Questa azione è irreversibile. Sei sicuro?")) {
+            if (confirm("Conferma finale: Vuoi davvero cancellare tutto?")) {
+                try {
+                    // 1. Clear Cloud
+                    await cloudService.clearData();
+                    // 2. Clear LocalStorage
+                    localStorage.clear();
+                    // 3. Reload
+                    window.location.reload();
+                } catch (e) {
+                    console.error("Reset fallito:", e);
+                    // Fallback se il cloud fallisce: cancella almeno locale
+                    localStorage.clear();
+                    window.location.reload();
+                }
+            }
+        }
+    };
+
     return (
         <div className="flex h-screen bg-light dark:bg-dark text-gray-900 dark:text-gray-100 font-sans">
             <div className="hidden md:flex md:flex-shrink-0">
@@ -865,6 +895,7 @@ const App: React.FC = () => {
                     openDeleteModal={openDeleteModal}
                     onExport={handleExportBackup}
                     onImport={handleImportBackup}
+                    onReset={handleFullReset}
                 />
             </div>
 
@@ -884,6 +915,7 @@ const App: React.FC = () => {
                     openDeleteModal={openDeleteModal}
                     onExport={handleExportBackup}
                     onImport={handleImportBackup}
+                    onReset={handleFullReset}
                 />
             </div>
 

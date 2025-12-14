@@ -20,36 +20,46 @@ type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error' | 'offline';
 export const CloudSync: React.FC = () => {
     const [status, setStatus] = useState<SyncStatus>('idle');
     const [lastSynced, setLastSynced] = useState<Date | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string>('');
     const timeoutRef = useRef<any>(null);
 
     // Caricamento iniziale dal cloud
     useEffect(() => {
         const initLoad = async () => {
             setStatus('syncing');
-            const data = await cloudService.loadData();
-            
-            if (data) {
-                // Aggiorna localStorage con i dati dal cloud
-                let updateCount = 0;
-                Object.keys(data).forEach(key => {
-                    if (key.startsWith('budget-app-')) {
-                        const localValue = localStorage.getItem(key);
-                        const cloudValue = JSON.stringify(data[key]);
-                        
-                        if (localValue !== cloudValue) {
-                            localStorage.setItem(key, cloudValue);
-                            // Notifica l'app che il dato è cambiato
-                            window.dispatchEvent(new CustomEvent('budget-app-sync-event', { detail: { key } }));
-                            updateCount++;
+            try {
+                const data = await cloudService.loadData();
+                
+                if (data) {
+                    // Aggiorna localStorage con i dati dal cloud
+                    let updateCount = 0;
+                    Object.keys(data).forEach(key => {
+                        if (key.startsWith('budget-app-')) {
+                            const localValue = localStorage.getItem(key);
+                            const cloudValue = JSON.stringify(data[key]);
+                            
+                            if (localValue !== cloudValue) {
+                                localStorage.setItem(key, cloudValue);
+                                // Notifica l'app che il dato è cambiato
+                                window.dispatchEvent(new CustomEvent('budget-app-sync-event', { detail: { key } }));
+                                updateCount++;
+                            }
                         }
-                    }
-                });
-                console.log(`Cloud sync: Updated ${updateCount} keys from server.`);
-                setLastSynced(new Date());
-                setStatus('saved');
-            } else {
-                // Se null, potrebbe essere offline o primo avvio
-                setStatus('idle'); 
+                    });
+                    console.log(`Cloud sync: Updated ${updateCount} keys from server.`);
+                    setLastSynced(new Date());
+                    setStatus('saved');
+                    setErrorMessage('');
+                } else {
+                    // Se null, potrebbe essere offline o 404 (local mode)
+                    console.warn("Cloud load returned null (possibly local mode)");
+                    setStatus('idle'); 
+                }
+            } catch (err: any) {
+                console.error("Init load error:", err);
+                // Non mostrare errore rosso all'avvio se fallisce il load (potrebbe essere solo offline)
+                // Ma se vogliamo essere rigorosi:
+                setStatus('idle');
             }
         };
 
@@ -60,6 +70,7 @@ export const CloudSync: React.FC = () => {
     useEffect(() => {
         const handleLocalChange = () => {
             setStatus('syncing');
+            setErrorMessage('');
             
             if (timeoutRef.current) {
                 clearTimeout(timeoutRef.current);
@@ -85,9 +96,11 @@ export const CloudSync: React.FC = () => {
                     await cloudService.saveData(dataToSave);
                     setLastSynced(new Date());
                     setStatus('saved');
-                } catch (error) {
+                    setErrorMessage('');
+                } catch (error: any) {
                     console.error("Save failed", error);
                     setStatus('error');
+                    setErrorMessage(error.message || 'Unknown save error');
                 }
             }, 2000);
         };
@@ -99,8 +112,18 @@ export const CloudSync: React.FC = () => {
         };
     }, []);
 
+    const handleClick = () => {
+        if (errorMessage) {
+            alert(`Errore Sincronizzazione: ${errorMessage}\n\nAssicurati di:\n1. Aver fatto 'Redeploy' su Vercel dopo aver aggiunto il database.\n2. Non essere in localhost (usa 'vercel dev' per testare in locale).`);
+        }
+    };
+
     return (
-        <div className="mt-4 mx-2 p-3 bg-blue-900/50 dark:bg-black/20 rounded-lg border border-blue-800 dark:border-gray-700">
+        <div 
+            className={`mt-4 mx-2 p-3 bg-blue-900/50 dark:bg-black/20 rounded-lg border border-blue-800 dark:border-gray-700 ${status === 'error' ? 'cursor-pointer hover:bg-red-900/20 border-red-800' : ''}`}
+            onClick={handleClick}
+            title={errorMessage || "Stato sincronizzazione cloud"}
+        >
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     {status === 'syncing' && <RefreshIcon className="w-4 h-4 text-blue-300 animate-spin" />}
@@ -115,7 +138,7 @@ export const CloudSync: React.FC = () => {
                     }`}>
                         {status === 'syncing' ? 'Sincronizzazione...' : 
                          status === 'saved' ? 'Cloud Salvato' : 
-                         status === 'error' ? 'Errore Sync' : 
+                         status === 'error' ? 'ERRORE SYNC' : 
                          'Cloud Ready'}
                     </span>
                 </div>
@@ -123,6 +146,11 @@ export const CloudSync: React.FC = () => {
             {lastSynced && (
                 <div className="text-[10px] text-blue-300/70 mt-1 text-right">
                     Ultimo: {lastSynced.toLocaleTimeString()}
+                </div>
+            )}
+            {status === 'error' && (
+                <div className="text-[9px] text-red-300 mt-1 text-right truncate">
+                    Clicca per dettagli
                 </div>
             )}
         </div>

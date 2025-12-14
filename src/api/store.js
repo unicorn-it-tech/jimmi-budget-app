@@ -1,49 +1,66 @@
 
-import { kv } from '@vercel/kv';
+import { createClient } from '@vercel/kv';
 
-export const config = {
-  runtime: 'edge',
-};
-
-export default async function handler(request) {
+export default async function handler(req, res) {
   try {
-    const url = new URL(request.url);
-    const key = 'jimmi-budget-data'; // Chiave unica per i dati dell'app
+    // Tentativo di connessione più robusto controllando diverse varianti di variabili d'ambiente
+    const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+    const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
 
-    if (request.method === 'POST') {
-      const data = await request.json();
-      // Salva i dati in Redis (Vercel KV)
-      await kv.set(key, data);
-      return new Response(JSON.stringify({ success: true, timestamp: new Date().toISOString() }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
+    if (!url || !token) {
+      console.error("Missing KV Environment Variables");
+      return res.status(500).json({ 
+        error: 'Database configuration missing', 
+        details: 'Check KV_REST_API_URL and KV_REST_API_TOKEN in Vercel settings.' 
       });
+    }
+
+    const kv = createClient({
+      url,
+      token,
+    });
+
+    const key = 'jimmi-budget-data';
+
+    // Gestione CORS
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    );
+
+    if (req.method === 'OPTIONS') {
+      res.status(200).end();
+      return;
+    }
+
+    // POST: Salvataggio
+    if (req.method === 'POST') {
+      const data = req.body;
+      if (!data) {
+        return res.status(400).json({ error: 'No data provided' });
+      }
+      await kv.set(key, data);
+      return res.status(200).json({ success: true, timestamp: new Date().toISOString() });
     } 
     
-    if (request.method === 'GET') {
-      // Recupera i dati da Redis
+    // GET: Recupero
+    if (req.method === 'GET') {
       const data = await kv.get(key);
-      return new Response(JSON.stringify(data || {}), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      });
+      return res.status(200).json(data || {});
     }
 
-    if (request.method === 'DELETE') {
-      // Cancella i dati da Redis (Reset Totale)
+    // DELETE: Cancellazione
+    if (req.method === 'DELETE') {
       await kv.del(key);
-      return new Response(JSON.stringify({ success: true, message: 'Database cleared' }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      });
+      return res.status(200).json({ success: true, message: 'Database cleared' });
     }
 
-    return new Response('Method not allowed', { status: 405 });
+    return res.status(405).json({ error: 'Method not allowed' });
   } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
-      status: 500,
-      headers: { 'content-type': 'application/json' },
-    });
+    console.error("Database Error Handler:", error);
+    return res.status(500).json({ error: error.message || 'Internal Server Error' });
   }
 }

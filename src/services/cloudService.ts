@@ -7,6 +7,7 @@ const API_ENDPOINT = '/api/store';
 
 export const cloudService = {
     async saveData(data: CloudData): Promise<void> {
+        console.log(`[CloudService] Attempting to SAVE to ${window.location.origin}${API_ENDPOINT}`);
         try {
             const response = await fetch(API_ENDPOINT, {
                 method: 'POST',
@@ -18,10 +19,9 @@ export const cloudService = {
 
             const contentType = response.headers.get("content-type");
             if (contentType && contentType.indexOf("application/json") === -1) {
-                // Leggiamo il testo della risposta per capire cosa sta tornando (spesso è l'HTML della home o una pagina di errore Vercel)
                 const text = await response.text();
-                console.error("Non-JSON Response Body:", text.substring(0, 500)); // Logga i primi 500 caratteri
-                throw new Error(`API returned non-JSON response (${response.status}). Check console for details.`);
+                console.error("[CloudService] Non-JSON Response Body:", text.substring(0, 500));
+                throw new Error(`API returned non-JSON response (${response.status}). The server might be returning the HTML homepage instead of the API.`);
             }
 
             if (!response.ok) {
@@ -29,20 +29,20 @@ export const cloudService = {
                 throw new Error(errorData.details || errorData.error || `Error ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
-            console.error('Cloud save failed:', error);
+            console.error('[CloudService] Save failed:', error);
             throw error;
         }
     },
 
     async loadData(): Promise<CloudData | null> {
+        console.log(`[CloudService] Attempting to LOAD from ${window.location.origin}${API_ENDPOINT}`);
         try {
             const response = await fetch(API_ENDPOINT);
             
             const contentType = response.headers.get("content-type");
             
-            // Gestione specifica per 404 o risposte non JSON
             if (response.status === 404 || (contentType && contentType.indexOf("application/json") === -1)) {
-                console.warn('API endpoint not accessible (404) or returned HTML. This usually means the API function is not deployed correctly or you are running locally without "vercel dev".');
+                console.warn('[CloudService] API endpoint not accessible (404) or returned HTML.');
                 return null;
             }
 
@@ -54,7 +54,7 @@ export const cloudService = {
             const data = await response.json();
             return data;
         } catch (error) {
-            console.error('Cloud load failed:', error);
+            console.error('[CloudService] Load failed:', error);
             return null;
         }
     },
@@ -69,7 +69,7 @@ export const cloudService = {
                 throw new Error(`Error clearing data: ${response.statusText}`);
             }
         } catch (error) {
-            console.error('Cloud clear failed:', error);
+            console.error('[CloudService] Clear failed:', error);
             throw error;
         }
     }

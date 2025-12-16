@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { PlusIcon, TrashIcon, XCircleIcon, ChevronLeftIcon, ChevronRightIcon, UploadIcon } from './icons';
 import type { BookingImportData, Apartment, BudgetDataForMonth } from '../types';
@@ -55,6 +56,7 @@ interface MonthlyPlannerProps {
     allBudgetData: Record<string, BudgetDataForMonth>;
     allCellData: Record<string, Record<string, CellData>>;
     setAllCellData: React.Dispatch<React.SetStateAction<Record<string, Record<string, CellData>>>>;
+    storagePrefix: string;
 }
 
 const formatNumber = (num: number, options: { fallback?: string, decimals?: number, prefix?: string } = {}) => {
@@ -69,7 +71,8 @@ const formatNumber = (num: number, options: { fallback?: string, decimals?: numb
 const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({ 
     month, year, apartments, 
     onApartmentNameChange, onAddApartment, onRemoveApartment,
-    onPreviousYear, onNextYear, allBudgetData, allCellData, setAllCellData
+    onPreviousYear, onNextYear, allBudgetData, allCellData, setAllCellData,
+    storagePrefix
 }) => {
     
     const currentMonthKey = useMemo(() => `${year}-${month}`, [year, month]);
@@ -94,7 +97,7 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
     const { days, daysInMonth } = getMonthData(month, year);
     const [isImporterOpen, setIsImporterOpen] = useState(false);
     
-    const [rateStrategyData, setRateStrategyData] = useLocalStorage(`budget-app-rate-strategy-${currentMonthKey}`, {
+    const [rateStrategyData, setRateStrategyData] = useLocalStorage(`${storagePrefix}-rate-strategy-${currentMonthKey}`, {
         pressureSettings: [
             { level: 'Bassissima', min: 0, max: 20, color: 'bg-yellow-300', label: 'Giallo: bassissima pressione (0-20%)' },
             { level: 'Bassa', min: 21, max: 35, color: 'bg-orange-400', label: 'Arancione: bassa pressione (21-35%)' },
@@ -117,7 +120,7 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
             "Mediterraneo apartment": [42,42,46,46,46,46,46,46,42,42,42,46,46,42,42,42,42,42,42,46,46,42,42,42,42,42,42,46,46,42,42],
             "Nenetta a mare": [90,90,98,98,98,98,98,98,90,90,90,98,98,90,90,90,90,90,90,98,98,90,90,90,90,90,90,98,98,90,90],
             "Orsini house": [42,42,46,46,46,46,46,46,42,42,42,46,46,42,42,42,42,42,42,46,46,42,42,42,42,42,42,46,46,42,42],
-            "Pamar 1": [42,42,46,46,46,46,46,46,42,42,42,46,46,42,42,42,42,42,42,46,46,42,42,42,42,42,42,46,46,42,42],
+            "Pamar 1": [42,42,46,46,46,46,46,46,42,42,42,46,46,42,42,42,46,46,42,42,42,42,42,42,46,46,42,42,42,42,42,46,46,42,42],
             "Riviera": [54,54,59,59,59,59,59,59,54,54,54,59,59,54,54,54,54,54,54,59,59,54,54,54,54,54,54,59,59,54,54],
             "Suite Centrale": [45,45,49,49,49,49,49,49,45,45,45,49,49,45,45,45,45,45,45,49,49,45,45,45,45,45,45,49,49,45,45],
         } as { [key: string]: number[] },

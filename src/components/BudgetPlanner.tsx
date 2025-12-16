@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import type { Apartment, BudgetDataForMonth } from '../types';
 import { LockClosedIcon, LockOpenIcon, ClipboardListIcon, XIcon } from './icons';
@@ -7,6 +8,7 @@ interface BudgetPlannerProps {
     apartments: Apartment[];
     year: number;
     onUpdate: (data: Record<string, BudgetDataForMonth>) => void;
+    storagePrefix: string;
 }
 
 interface LogEntry {
@@ -49,20 +51,20 @@ const formatIndex = (value: number) => {
 };
 
 
-const BudgetPlanner: React.FC<BudgetPlannerProps> = ({ apartments, year, onUpdate }) => {
+const BudgetPlanner: React.FC<BudgetPlannerProps> = ({ apartments, year, onUpdate, storagePrefix }) => {
     
-    const [monthlyUnits, setMonthlyUnits] = useLocalStorage<number[]>('budget-app-budget-units', Array(12).fill(0));
+    const [monthlyUnits, setMonthlyUnits] = useLocalStorage<number[]>(`${storagePrefix}-budget-units`, Array(12).fill(0));
     
-    const [budgetData, setBudgetData] = useLocalStorage('budget-app-budget-data', {
+    const [budgetData, setBudgetData] = useLocalStorage(`${storagePrefix}-budget-data`, {
         percentualeOccupazionePrevista: [1.00, 3.00, 10.00, 30.00, 30.00, 70.00, 80.00, 90.00, 70.00, 10.00, 1.00, 3.00],
         adr: [60.00, 60.00, 50.00, 60.00, 55.00, 90.00, 100.00, 150.00, 90.00, 50.00, 60.00, 60.00],
         fatturatoAnnoPrecedente: Array(12).fill(0),
     });
 
-    const [isBudgetLocked, setIsBudgetLocked] = useLocalStorage<boolean>('budget-app-budget-locked', false);
+    const [isBudgetLocked, setIsBudgetLocked] = useLocalStorage<boolean>(`${storagePrefix}-budget-locked`, false);
     const [isLogVisible, setIsLogVisible] = useState(false);
-    // Per i log, usiamo un formato serializzabile (date come stringhe) in LS, ma qui gestiamo Date object
-    const [storedLogEntries, setStoredLogEntries] = useLocalStorage<{timestamp: string, description: string}[]>('budget-app-budget-logs', [{ timestamp: new Date().toISOString(), description: "Sessione budget avviata." }]);
+    
+    const [storedLogEntries, setStoredLogEntries] = useLocalStorage<{timestamp: string, description: string}[]>(`${storagePrefix}-budget-logs`, [{ timestamp: new Date().toISOString(), description: "Sessione budget avviata." }]);
     
     const logEntries = useMemo(() => {
         return storedLogEntries.map(e => ({ ...e, timestamp: new Date(e.timestamp) }));

@@ -118,6 +118,7 @@ interface PageContentProps {
     forecastMonthlyUnits: number[];
     setForecastMonthlyUnits: React.Dispatch<React.SetStateAction<number[]>>;
     availableClusters: string[];
+    storagePrefix: string;
 }
 
 const PageContent: React.FC<PageContentProps> = ({ 
@@ -144,7 +145,8 @@ const PageContent: React.FC<PageContentProps> = ({
     setForecastInputs,
     forecastMonthlyUnits,
     setForecastMonthlyUnits,
-    availableClusters
+    availableClusters,
+    storagePrefix
 }) => {
     const isMonthPage = months.includes(activePage);
     
@@ -154,6 +156,7 @@ const PageContent: React.FC<PageContentProps> = ({
                 apartments={apartments}
                 year={currentYear}
                 onUpdate={onBudgetUpdate}
+                storagePrefix={storagePrefix}
             />
         );
     }
@@ -189,15 +192,16 @@ const PageContent: React.FC<PageContentProps> = ({
             availableNightsData={forecastData.occupazionePotenziale}
             forecastSoldNightsData={forecastData.totaleCamereOccupate}
             apartments={apartments}
+            storagePrefix={storagePrefix}
         />;
     }
 
     if (activePage === 'Tabella pressione') {
-        return <TabellaPressione />;
+        return <TabellaPressione storagePrefix={storagePrefix} />;
     }
 
     if (activePage === 'Competitors') {
-        return <Competitors availableClusters={availableClusters} />;
+        return <Competitors availableClusters={availableClusters} storagePrefix={storagePrefix} />;
     }
 
     if (isMonthPage) {
@@ -214,6 +218,7 @@ const PageContent: React.FC<PageContentProps> = ({
                 allBudgetData={allBudgetData}
                 allCellData={allCellData}
                 setAllCellData={setAllCellData}
+                storagePrefix={storagePrefix}
             />
         );
     }
@@ -267,13 +272,14 @@ interface SidebarProps {
     onExport: () => void;
     onImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onReset: () => void;
+    setActiveMacroCluster: (name: string) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
     navigationData, openMacroClusters, openClusters, activePage,
     toggleMacroCluster, toggleCluster, setActivePage, setIsSidebarOpen,
     handleCreateCluster, openRenameModal, openDeleteModal,
-    onExport, onImport, onReset
+    onExport, onImport, onReset, setActiveMacroCluster
 }) => {
     return (
         <aside className="flex flex-col w-64 h-full px-4 py-8 bg-blue-800 dark:bg-gray-800 border-r border-blue-900 dark:border-gray-700 overflow-y-auto">
@@ -335,7 +341,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                                                                     name={item.name}
                                                                     icon={iconMap[item.iconName] || <DocumentReportIcon />}
                                                                     isActive={activePage === item.name}
-                                                                    onClick={() => { setActivePage(item.name); setIsSidebarOpen(false); }}
+                                                                    onClick={() => { 
+                                                                        setActivePage(item.name); 
+                                                                        setActiveMacroCluster(macroCluster.name);
+                                                                        setIsSidebarOpen(false); 
+                                                                    }}
                                                                 />
                                                             ))}
                                                         </div>
@@ -502,12 +512,16 @@ const DeleteClusterModal: React.FC<{ isOpen: boolean; onClose: () => void; onCon
 
 const App: React.FC = () => {
     const [activePage, setActivePage] = useLocalStorage<string>('budget-app-active-page', 'Gennaio');
+    const [activeMacroCluster, setActiveMacroCluster] = useLocalStorage<string>('budget-app-active-macro-cluster', 'cluster');
     const [isDarkMode, setIsDarkMode] = useLocalStorage<boolean>('budget-app-dark-mode', false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [openClusters, setOpenClusters] = useLocalStorage<string[]>('budget-app-open-clusters', ['Pianificazione Mensile']);
     const [openMacroClusters, setOpenMacroClusters] = useLocalStorage<string[]>('budget-app-open-macro-clusters', ['cluster']);
     const [navigationData, setNavigationData] = useLocalStorage('budget-app-navigation', initialNavigationConfig);
     
+    // Prefix for scoped storage keys based on active cluster
+    const storagePrefix = `budget-app-${activeMacroCluster}`;
+
     // Modal States
     const [isCreateClusterModalOpen, setIsCreateClusterModalOpen] = useState(false);
     const [newClusterName, setNewClusterName] = useState('');
@@ -519,11 +533,11 @@ const App: React.FC = () => {
     const [deleteClusterModalOpen, setDeleteClusterModalOpen] = useState(false);
     const [deletingCluster, setDeletingCluster] = useState<string | null>(null);
 
-    const [currentYear, setCurrentYear] = useLocalStorage<number>('budget-app-current-year', new Date().getFullYear());
+    const [currentYear, setCurrentYear] = useLocalStorage<number>(`${storagePrefix}-current-year`, new Date().getFullYear());
     
-    const [apartments, setApartments] = useLocalStorage<Apartment[]>('budget-app-apartments', initialApartments);
+    const [apartments, setApartments] = useLocalStorage<Apartment[]>(`${storagePrefix}-apartments`, initialApartments);
     
-    const [allCellData, setAllCellData] = useLocalStorage<Record<string, Record<string, CellData>>>('budget-app-cell-data', () => {
+    const [allCellData, setAllCellData] = useLocalStorage<Record<string, Record<string, CellData>>>(`${storagePrefix}-cell-data`, () => {
         const initialAllData: Record<string, Record<string, CellData>> = {};
         const blockedInfo = [
             { name: "Pamar 2", start: 18, end: 27, text: "Bloccata" },
@@ -553,18 +567,18 @@ const App: React.FC = () => {
 
     // Stato per i dati di monitoring
     const [budgetDataForMonitoring, setBudgetDataForMonitoring] = useState<MonthlyData | null>(null);
-    const [allBudgetData, setAllBudgetData] = useLocalStorage<Record<string, BudgetDataForMonth>>('budget-app-all-budget-data', {});
-    const [savedActualData, setSavedActualData] = useLocalStorage<SavedActualData | null>('budget-app-saved-actual', null);
-    const [actualData, setActualData] = useLocalStorage<SavedActualData['data'] | null>('budget-app-actual-data', null);
+    const [allBudgetData, setAllBudgetData] = useLocalStorage<Record<string, BudgetDataForMonth>>(`${storagePrefix}-all-budget-data`, {});
+    const [savedActualData, setSavedActualData] = useLocalStorage<SavedActualData | null>(`${storagePrefix}-saved-actual`, null);
+    const [actualData, setActualData] = useLocalStorage<SavedActualData['data'] | null>(`${storagePrefix}-actual-data`, null);
     const [isUpdatingActuals, setIsUpdatingActuals] = useState(false);
 
     // Stato per gli input del forecast
-    const [forecastInputs, setForecastInputs] = useLocalStorage<ForecastInputs>('budget-app-forecast-inputs', {
+    const [forecastInputs, setForecastInputs] = useLocalStorage<ForecastInputs>(`${storagePrefix}-forecast-inputs`, {
         percentualeOccupazionePrevista: [1.00, 3.00, 10.00, 30.00, 30.00, 70.00, 80.00, 90.00, 70.00, 10.00, 1.00, 3.00],
         adr: [60.00, 60.00, 50.00, 60.00, 55.00, 90.00, 100.00, 150.00, 90.00, 50.00, 60.00, 60.00],
         fatturatoAnnoPrecedente: Array(12).fill(0),
     });
-    const [forecastMonthlyUnits, setForecastMonthlyUnits] = useLocalStorage<number[]>('budget-app-forecast-units', Array(12).fill(apartments.length));
+    const [forecastMonthlyUnits, setForecastMonthlyUnits] = useLocalStorage<number[]>(`${storagePrefix}-forecast-units`, Array(12).fill(apartments.length));
     
     const availableClusters = useMemo(() => navigationData.map(item => item.name), [navigationData]);
 
@@ -896,6 +910,7 @@ const App: React.FC = () => {
                     onExport={handleExportBackup}
                     onImport={handleImportBackup}
                     onReset={handleFullReset}
+                    setActiveMacroCluster={setActiveMacroCluster}
                 />
             </div>
 
@@ -916,6 +931,7 @@ const App: React.FC = () => {
                     onExport={handleExportBackup}
                     onImport={handleImportBackup}
                     onReset={handleFullReset}
+                    setActiveMacroCluster={setActiveMacroCluster}
                 />
             </div>
 
@@ -953,6 +969,7 @@ const App: React.FC = () => {
                         forecastMonthlyUnits={forecastMonthlyUnits}
                         setForecastMonthlyUnits={setForecastMonthlyUnits}
                         availableClusters={availableClusters}
+                        storagePrefix={storagePrefix}
                    />
                 </main>
             </div>

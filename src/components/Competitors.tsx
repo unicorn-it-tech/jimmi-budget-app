@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { UsersIcon, LinkIcon, TrashIcon, PlusCircleIcon, StarIcon, LocationMarkerIcon, XIcon, CalendarIcon, ChevronRightIcon, ChartIcon } from './icons';
 import { useLocalStorage } from '../hooks/useLocalStorage';
@@ -48,19 +49,20 @@ const formatCurrency = (value: number) => {
 
 interface CompetitorsProps {
     availableClusters: string[];
+    storagePrefix: string;
 }
 
-const Competitors: React.FC<CompetitorsProps> = ({ availableClusters }) => {
+const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePrefix }) => {
     // Use availableClusters prop or a default if empty, ensure "cluster" is handled as default
     const clusters = availableClusters.length > 0 ? availableClusters : ["cluster"];
 
-    const [competitors, setCompetitors] = useLocalStorage<Competitor[]>('budget-app-competitors', [
+    const [competitors, setCompetitors] = useLocalStorage<Competitor[]>(`${storagePrefix}-competitors`, [
         { id: 1, name: 'Hotel Bella Vista', cluster: 'cluster', score: 8.5, distance: 0.5, url: 'https://booking.com', avgRate: 120, note: 'Diretto concorrente' },
         { id: 2, name: 'Residence Mare', cluster: 'cluster', score: 9.2, distance: 1.2, url: '', avgRate: 145, note: 'Alta qualità' },
         { id: 3, name: 'B&B Centro', cluster: 'cluster', score: 7.8, distance: 0.2, url: '', avgRate: 90, note: 'Prezzi aggressivi' },
     ]);
 
-    const [pricingData, setPricingData] = useLocalStorage<PricingData>('budget-app-competitors-pricing', {});
+    const [pricingData, setPricingData] = useLocalStorage<PricingData>(`${storagePrefix}-competitors-pricing`, {});
     
     // UI State
     const [activeCompetitorId, setActiveCompetitorId] = useState<number | null>(null);

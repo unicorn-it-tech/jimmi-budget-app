@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { UsersIcon, ScaleIcon } from './icons';
 import { useLocalStorage } from '../hooks/useLocalStorage';
@@ -18,10 +19,14 @@ const pressureLevels: PressureLevelConfig[] = [
     { id: 'altissima', label: 'ALTISSIMA', headerColor: 'bg-red-600', borderColor: 'border-red-600', footerColor: 'bg-red-600' },
 ];
 
-const TabellaPressione: React.FC = () => {
-    const [step, setStep] = useLocalStorage<number>('budget-app-pressione-step', 10);
-    const [numBars, setNumBars] = useLocalStorage<number>('budget-app-pressione-bars', 5);
-    const [baseRates, setBaseRates] = useLocalStorage<Record<string, number>>('budget-app-pressione-rates', {
+interface TabellaPressioneProps {
+    storagePrefix: string;
+}
+
+const TabellaPressione: React.FC<TabellaPressioneProps> = ({ storagePrefix }) => {
+    const [step, setStep] = useLocalStorage<number>(`${storagePrefix}-pressione-step`, 10);
+    const [numBars, setNumBars] = useLocalStorage<number>(`${storagePrefix}-pressione-bars`, 5);
+    const [baseRates, setBaseRates] = useLocalStorage<Record<string, number>>(`${storagePrefix}-pressione-rates`, {
         bassissima: 60,
         bassa: 65,
         media: 75,

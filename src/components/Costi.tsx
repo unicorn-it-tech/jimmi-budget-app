@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import type { MonthlyData, Apartment } from '../types';
 import { ChartIcon, UsersIcon, ChevronLeftIcon, PlusCircleIcon, TrashIcon, BuildingIcon } from './icons';
@@ -8,6 +9,7 @@ interface CostiProps {
     availableNightsData: MonthlyData | null;
     forecastSoldNightsData: MonthlyData | null;
     apartments: Apartment[];
+    storagePrefix: string;
 }
 
 const months = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
@@ -40,13 +42,14 @@ const AnalisiComplessiva: React.FC<{
     availableNightsData: MonthlyData | null;
     forecastSoldNightsData: MonthlyData | null;
     onBack: () => void; 
-}> = ({ forecastRevenue, availableNightsData, forecastSoldNightsData, onBack }) => {
+    storagePrefix: string;
+}> = ({ forecastRevenue, availableNightsData, forecastSoldNightsData, onBack, storagePrefix }) => {
     const [showMonths, setShowMonths] = useState(false);
 
-    const [fixedCosts, setFixedCosts] = useLocalStorage<FixedCost[]>('budget-app-costi-fixed', [
+    const [fixedCosts, setFixedCosts] = useLocalStorage<FixedCost[]>(`${storagePrefix}-costi-fixed`, [
         { id: 100, name: 'Affitto', annualAmount: 24000 },
     ]);
-    const [variableCosts, setVariableCosts] = useLocalStorage<VariableCost[]>('budget-app-costi-variable', [
+    const [variableCosts, setVariableCosts] = useLocalStorage<VariableCost[]>(`${storagePrefix}-costi-variable`, [
         { id: 200, name: 'Commissioni OTA', type: 'percentuale', values: [15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
         { id: 201, name: 'Utenze', type: 'variabile', values: [3950, 200, 220, 250, 300, 350, 400, 450, 400, 300, 250, 220, 210] },
     ]);
@@ -347,10 +350,10 @@ const AnalisiComplessiva: React.FC<{
     );
 };
 
-const AnalisiSelettiva: React.FC<{ apartments: Apartment[]; onBack: () => void; }> = ({ apartments, onBack }) => {
+const AnalisiSelettiva: React.FC<{ apartments: Apartment[]; onBack: () => void; storagePrefix: string; }> = ({ apartments, onBack, storagePrefix }) => {
     const [selectedApt, setSelectedApt] = useState<Apartment | null>(null);
-    const [allCosts, setAllCosts] = useLocalStorage<Record<number, { fixedCosts: FixedCost[], variableCosts: VariableCost[] }>>('budget-app-costi-selettiva', {});
-    const [nottiAperte, setNottiAperte] = useLocalStorage<Record<number, number[]>>('budget-app-costi-selettiva-notti', {});
+    const [allCosts, setAllCosts] = useLocalStorage<Record<number, { fixedCosts: FixedCost[], variableCosts: VariableCost[] }>>(`${storagePrefix}-costi-selettiva`, {});
+    const [nottiAperte, setNottiAperte] = useLocalStorage<Record<number, number[]>>(`${storagePrefix}-costi-selettiva-notti`, {});
 
     const currentCosts = selectedApt ? allCosts[selectedApt.id] || { fixedCosts: [], variableCosts: [] } : { fixedCosts: [], variableCosts: [] };
     const currentNottiAperte = selectedApt ? nottiAperte[selectedApt.id] || Array(12).fill(0) : Array(12).fill(0);
@@ -575,7 +578,7 @@ const AnalisiSelettiva: React.FC<{ apartments: Apartment[]; onBack: () => void; 
 };
 
 
-const Costi: React.FC<CostiProps> = ({ forecastRevenue, availableNightsData, forecastSoldNightsData, apartments }) => {
+const Costi: React.FC<CostiProps> = ({ forecastRevenue, availableNightsData, forecastSoldNightsData, apartments, storagePrefix }) => {
     const [analysisType, setAnalysisType] = useState<'selection' | 'complessiva' | 'selettiva'>('selection');
 
     if (analysisType === 'selection') {
@@ -629,11 +632,12 @@ const Costi: React.FC<CostiProps> = ({ forecastRevenue, availableNightsData, for
             availableNightsData={availableNightsData}
             forecastSoldNightsData={forecastSoldNightsData}
             onBack={() => setAnalysisType('selection')} 
+            storagePrefix={storagePrefix}
         />;
     }
 
     if (analysisType === 'selettiva') {
-        return <AnalisiSelettiva apartments={apartments} onBack={() => setAnalysisType('selection')} />;
+        return <AnalisiSelettiva apartments={apartments} onBack={() => setAnalysisType('selection')} storagePrefix={storagePrefix} />;
     }
 
     return null;

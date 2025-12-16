@@ -88,10 +88,7 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
         };
     }, [allBudgetData, currentMonthKey]);
 
-    // Stato per la selezione multipla
-    const [selection, setSelection] = useState<{ aptId: number, startDay: number, endDay: number } | null>(null);
-    const [isSelecting, setIsSelecting] = useState(false);
-    
+    const [activeCell, setActiveCell] = useState<{ aptId: number; dayNum: number } | null>(null);
     const [editorPosition, setEditorPosition] = useState({ top: 0, left: 0, width: 0 });
     const [editorSelectedColor, setEditorSelectedColor] = useState("");
     const [editorPrice, setEditorPrice] = useState("");
@@ -326,114 +323,63 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (editorRef.current && !editorRef.current.contains(event.target as Node)) {
-                setSelection(null);
+                setActiveCell(null);
             }
         };
-        if (selection) {
+        if (activeCell) {
             document.addEventListener("mousedown", handleClickOutside);
         }
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [selection]);
+    }, [activeCell]);
     
-    // --- Gestione Selezione Multipla ---
-
-    const handleMouseDown = (e: React.MouseEvent, aptId: number, dayNum: number) => {
-        // Ignora click destro
-        if (e.button !== 0) return;
-        
-        setIsSelecting(true);
-        setSelection({ aptId, startDay: dayNum, endDay: dayNum });
-        setEditorSelectedColor("");
-        setEditorPrice("");
+    const handleCellClick = (e: React.MouseEvent<HTMLTableCellElement>, aptId: number, dayNum: number) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        setEditorPosition({
+            top: rect.bottom + window.scrollY,
+            left: rect.left + window.scrollX,
+            width: rect.width,
+        });
+        setActiveCell({ aptId, dayNum });
+        const key = `${aptId}-${dayNum}`;
+        const currentData = cellData[key];
+        setEditorSelectedColor(currentData?.color || "");
+        setEditorPrice(currentData?.price && currentData.price > 0 ? currentData.price.toString() : "");
     };
-
-    const handleMouseEnter = (aptId: number, dayNum: number) => {
-        if (isSelecting && selection && selection.aptId === aptId) {
-            setSelection(prev => prev ? { ...prev, endDay: dayNum } : null);
-        }
-    };
-
-    const handleMouseUp = (e: React.MouseEvent) => {
-        if (isSelecting) {
-            setIsSelecting(false);
-            if (selection) {
-                const rect = (e.target as HTMLElement).closest('td')?.getBoundingClientRect();
-                if (rect) {
-                    setEditorPosition({
-                        top: rect.bottom + window.scrollY,
-                        left: rect.left + window.scrollX,
-                        width: rect.width,
-                    });
-                }
-                
-                // Pre-fill se è una singola cella o se vogliamo
-                // Ma per ora lasciamo vuoto per nuova immissione
-            }
-        }
-    };
-
-    // Chiudi selezione se il mouse viene rilasciato fuori dalla tabella
-    useEffect(() => {
-        const handleGlobalMouseUp = () => {
-            if (isSelecting) {
-                setIsSelecting(false);
-            }
-        };
-        window.addEventListener('mouseup', handleGlobalMouseUp);
-        return () => window.removeEventListener('mouseup', handleGlobalMouseUp);
-    }, [isSelecting]);
-
 
     const handleSaveCell = () => {
-        if (!selection) return;
+        if (!activeCell) return;
+        const key = `${activeCell.aptId}-${activeCell.dayNum}`;
+        const price = parseFloat(editorPrice.replace(',', '.'));
         
-        const start = Math.min(selection.startDay, selection.endDay);
-        const end = Math.max(selection.startDay, selection.endDay);
-        const dayCount = end - start + 1;
-        
-        const totalInputPrice = parseFloat(editorPrice.replace(',', '.'));
-        const pricePerDay = isNaN(totalInputPrice) ? undefined : totalInputPrice / dayCount;
-        
-        const noValue = !editorSelectedColor && (!editorPrice || isNaN(totalInputPrice) || totalInputPrice <= 0);
+        const noValue = !editorSelectedColor && (!editorPrice || isNaN(price) || price <= 0);
 
         if (noValue) {
             handleClearCell();
         } else {
              setAllCellData(prev => {
                 const currentMonthData = prev[currentMonthKey] || {};
-                const newMonthData = { ...currentMonthData };
-                
-                for (let d = start; d <= end; d++) {
-                    const key = `${selection.aptId}-${d}`;
-                    newMonthData[key] = {
+                const newMonthData = {
+                    ...currentMonthData,
+                    [key]: {
                         color: editorSelectedColor,
-                        price: pricePerDay
-                    };
-                }
-                
+                        price: isNaN(price) ? undefined : price
+                    }
+                };
                 return { ...prev, [currentMonthKey]: newMonthData };
              });
         }
-        setSelection(null);
+        setActiveCell(null);
     };
 
     const handleClearCell = () => {
-        if (!selection) return;
-        
-        const start = Math.min(selection.startDay, selection.endDay);
-        const end = Math.max(selection.startDay, selection.endDay);
-
+        if (!activeCell) return;
+        const key = `${activeCell.aptId}-${activeCell.dayNum}`;
         setAllCellData(prev => {
             const currentMonthData = prev[currentMonthKey] || {};
             const newMonthData = { ...currentMonthData };
-            
-            for (let d = start; d <= end; d++) {
-                const key = `${selection.aptId}-${d}`;
-                delete newMonthData[key];
-            }
-            
+            delete newMonthData[key];
             return {
                 ...prev,
                 [currentMonthKey]: newMonthData
@@ -441,7 +387,7 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
         });
         setEditorSelectedColor("");
         setEditorPrice("");
-        setSelection(null);
+        setActiveCell(null);
     };
     
     const getCellContent = (data: CellData | undefined) => {
@@ -478,7 +424,7 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
 
     return (
         <div className="p-4 sm:p-6 md:p-8 space-y-8">
-            <div className="bg-white dark:bg-[#1e293b] p-1 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-x-auto select-none">
+            <div className="bg-white dark:bg-[#1e293b] p-1 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-x-auto">
                 <div className="min-w-[2800px] text-xs">
                     <table className="w-full border-collapse text-center table-fixed">
                         <thead>
@@ -583,31 +529,13 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
                                         const isBooked = data && data.color && data.price && data.price > 0;
 
                                         const textClass = isBooked ? 'font-bold text-black' : 'text-gray-400 dark:text-slate-600';
-                                        
-                                        // Verifica selezione
-                                        let isSelected = false;
-                                        if (selection && selection.aptId === apt.id) {
-                                            const start = Math.min(selection.startDay, selection.endDay);
-                                            const end = Math.max(selection.startDay, selection.endDay);
-                                            if (d.dayNum >= start && d.dayNum <= end) {
-                                                isSelected = true;
-                                            }
-                                        }
-
-                                        let cellBgClass = isBooked ? data.color : 'bg-transparent';
-                                        if (isSelected) {
-                                            cellBgClass = 'bg-primary/20 dark:bg-primary/40 ring-2 ring-inset ring-primary';
-                                        }
+                                        const cellBgClass = isBooked 
+                                            ? data.color 
+                                            : 'bg-transparent';
 
                                         return (
-                                            <td 
-                                                key={d.dayNum} 
-                                                onMouseDown={(e) => handleMouseDown(e, apt.id, d.dayNum)}
-                                                onMouseEnter={() => handleMouseEnter(apt.id, d.dayNum)}
-                                                onMouseUp={handleMouseUp}
-                                                className={`p-1 border-r border-gray-200 dark:border-slate-700 text-[10px] whitespace-nowrap cursor-pointer transition-all duration-75 ${cellBgClass} hover:bg-gray-100 dark:hover:bg-slate-700/50 relative`}
-                                            >
-                                                <div className={`h-full w-full truncate ${textClass} pointer-events-none`}>{content}</div>
+                                            <td key={d.dayNum} onClick={(e) => handleCellClick(e, apt.id, d.dayNum)} className={`p-1 border-r border-gray-200 dark:border-slate-700 text-[10px] whitespace-nowrap cursor-pointer transition-all duration-150 ${cellBgClass} hover:bg-gray-100 dark:hover:bg-slate-700/50 relative`}>
+                                                <div className={`h-full w-full truncate ${textClass}`}>{content}</div>
                                             </td>
                                         )
                                     })}
@@ -671,15 +599,12 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
                 onPressureColorChange={handlePressureColorChange}
             />
 
-            {selection && (
+            {activeCell && (
                 <div 
                     ref={editorRef} 
                     style={{ top: editorPosition.top, left: editorPosition.left, minWidth: editorPosition.width }} 
                     className="fixed z-20 bg-white dark:bg-[#1e293b] shadow-2xl rounded-xl border border-gray-200 dark:border-slate-600 p-4 flex flex-col gap-3 ring-1 ring-black/5"
                 >
-                    <div className="text-xs text-center font-bold text-gray-500 dark:text-slate-400 mb-1">
-                        {Math.abs(selection.endDay - selection.startDay) + 1} Giorno/i Selezionato/i
-                    </div>
                     <select
                         value={editorSelectedColor}
                         onChange={(e) => setEditorSelectedColor(e.target.value)}
@@ -693,23 +618,16 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
                             </option>
                         ))}
                     </select>
-                    <div className="relative">
-                        <input
-                            type="number"
-                            placeholder="Importo Totale (€)"
-                            value={editorPrice}
-                            onChange={(e) => setEditorPrice(e.target.value)}
-                            step="0.01"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary dark:bg-slate-900 dark:border-slate-700 dark:text-white text-sm"
-                        />
-                        {editorPrice && (
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 pointer-events-none">
-                                (~{formatNumber(parseFloat(editorPrice) / (Math.abs(selection.endDay - selection.startDay) + 1), { decimals: 0 })}/gg)
-                            </div>
-                        )}
-                    </div>
+                    <input
+                        type="number"
+                        placeholder="Prezzo (€)"
+                        value={editorPrice}
+                        onChange={(e) => setEditorPrice(e.target.value)}
+                        step="0.01"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary dark:bg-slate-900 dark:border-slate-700 dark:text-white text-sm"
+                    />
                      <div className="flex items-center justify-between gap-2 border-t border-gray-100 dark:border-slate-700 pt-3 mt-1">
-                        <button onClick={handleClearCell} className="p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-500 transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-slate-800" title="Pulisci Selezione">
+                        <button onClick={handleClearCell} className="p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-500 transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-slate-800" title="Pulisci Cella">
                             <XCircleIcon className="w-5 h-5"/>
                         </button>
                         <button onClick={handleSaveCell} className="px-4 py-1.5 text-sm font-bold text-white bg-primary rounded-lg shadow-sm hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-slate-900 transition-all">

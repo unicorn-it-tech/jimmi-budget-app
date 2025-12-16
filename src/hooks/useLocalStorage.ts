@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 
 // Evento custom per notificare i cambiamenti locali e forzare l'aggiornamento
@@ -20,9 +19,10 @@ export function useLocalStorage<T>(key: string, initialValue: T | (() => T)) {
     }
   }, [key, initialValue]);
 
+  // Stato locale
   const [storedValue, setStoredValue] = useState<T>(readValue);
 
-  // Aggiorna lo stato se la chiave cambia (es. cambio cluster)
+  // IMPORTANTE: Quando cambia la chiave (es. cambio cluster), ricarica il valore
   useEffect(() => {
     setStoredValue(readValue());
   }, [key, readValue]);
@@ -39,7 +39,7 @@ export function useLocalStorage<T>(key: string, initialValue: T | (() => T)) {
             // Dispatch evento per notificare che un dato è cambiato (per il CloudSync)
             window.dispatchEvent(new CustomEvent(CHANGE_EVENT_NAME, { detail: { key } }));
             
-            // Dispatch evento per aggiornare altri hook nella stessa pagina
+            // Dispatch evento per aggiornare altri hook nella stessa pagina che usano la stessa chiave
             window.dispatchEvent(new CustomEvent(SYNC_EVENT_NAME, { detail: { key, newValue: valueToStore } }));
         } catch (e) {
             console.error(`Error saving localStorage key "${key}":`, e);
@@ -53,6 +53,7 @@ export function useLocalStorage<T>(key: string, initialValue: T | (() => T)) {
     }
   }, [key]);
 
+  // Ascolta eventi di storage (per sync tra tab o componenti)
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent | CustomEvent) => {
       if ((event as StorageEvent).key === key || (event as CustomEvent).detail?.key === key) {

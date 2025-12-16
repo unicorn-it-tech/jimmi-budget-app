@@ -246,15 +246,14 @@ const NavLink: React.FC<{name: string, icon: React.ReactElement<{ className?: st
             e.preventDefault();
             onClick();
         }}
-        className={`flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 group relative overflow-hidden ${
+        className={`flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200 ${
             isActive
-                ? 'bg-primary text-white shadow-md translate-x-1'
-                : 'text-blue-100 dark:text-gray-300 hover:bg-blue-700/50 dark:hover:bg-dark-secondary hover:text-white'
+                ? 'bg-primary text-white shadow-sm'
+                : 'text-blue-100 dark:text-gray-300 hover:bg-blue-700 dark:hover:bg-dark-secondary'
         }`}
     >
-        {isActive && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-yellow-400"></div>}
-        {React.cloneElement(icon, { className: `w-5 h-5 mr-3 transition-colors ${isActive ? 'text-yellow-300' : 'text-blue-300 group-hover:text-white'}` })}
-        <span className={isActive ? 'font-bold tracking-wide' : ''}>{name}</span>
+        {React.cloneElement(icon, { className: "w-5 h-5 mr-3" })}
+        <span>{name}</span>
     </a>
 );
 
@@ -263,7 +262,6 @@ interface SidebarProps {
     openMacroClusters: string[];
     openClusters: string[];
     activePage: string;
-    activeMacroCluster: string;
     toggleMacroCluster: (name: string) => void;
     toggleCluster: (name: string) => void;
     setActivePage: (name: string) => void;
@@ -278,7 +276,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
-    navigationData, openMacroClusters, openClusters, activePage, activeMacroCluster,
+    navigationData, openMacroClusters, openClusters, activePage,
     toggleMacroCluster, toggleCluster, setActivePage, setIsSidebarOpen,
     handleCreateCluster, openRenameModal, openDeleteModal,
     onExport, onImport, onReset, setActiveMacroCluster
@@ -303,10 +301,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <nav className="space-y-2">
                     {navigationData.map(macroCluster => {
                         const isMacroOpen = openMacroClusters.includes(macroCluster.name);
-                        const isCurrentMacro = activeMacroCluster === macroCluster.name;
                         return (
                             <div key={macroCluster.name}>
-                                <div className={`w-full flex items-center justify-between text-sm font-semibold uppercase tracking-wider rounded-lg mb-1 overflow-hidden group transition-colors ${isCurrentMacro ? 'bg-blue-900/80 text-white' : 'bg-blue-900/40 text-blue-200'}`}>
+                                <div className="w-full flex items-center justify-between text-sm font-semibold text-blue-100 dark:text-gray-200 uppercase tracking-wider rounded-lg bg-blue-900 dark:bg-dark-secondary mb-1 overflow-hidden group">
                                     <button
                                         onClick={() => toggleMacroCluster(macroCluster.name)}
                                         className="flex-grow flex items-center justify-between px-2 py-3 focus:outline-none hover:bg-blue-800 dark:hover:bg-gray-700 transition-colors"
@@ -343,7 +340,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                                                                     key={item.name}
                                                                     name={item.name}
                                                                     icon={iconMap[item.iconName] || <DocumentReportIcon />}
-                                                                    isActive={activePage === item.name && activeMacroCluster === macroCluster.name}
+                                                                    isActive={activePage === item.name}
                                                                     onClick={() => { 
                                                                         setActivePage(item.name); 
                                                                         setActiveMacroCluster(macroCluster.name);
@@ -395,7 +392,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     );
 };
 
-const Header: React.FC<{ activePage: string; activeMacroCluster: string; isSidebarOpen: boolean; setIsSidebarOpen: (v: boolean) => void; isDarkMode: boolean; setIsDarkMode: (v: boolean) => void }> = ({ activePage, activeMacroCluster, isSidebarOpen, setIsSidebarOpen, isDarkMode, setIsDarkMode }) => (
+const Header: React.FC<{ activePage: string; isSidebarOpen: boolean; setIsSidebarOpen: (v: boolean) => void; isDarkMode: boolean; setIsDarkMode: (v: boolean) => void }> = ({ activePage, isSidebarOpen, setIsSidebarOpen, isDarkMode, setIsDarkMode }) => (
     <header className="bg-white dark:bg-gray-800 shadow-sm z-10 border-b dark:border-gray-700">
         <div className="container mx-auto px-4 md:px-8 py-4 flex justify-between items-center">
             <div className="flex items-center gap-4">
@@ -406,10 +403,7 @@ const Header: React.FC<{ activePage: string; activeMacroCluster: string; isSideb
                 >
                     {isSidebarOpen ? <XIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
                 </button>
-                <div className="flex flex-col">
-                    <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">{activeMacroCluster}</span>
-                    <h1 className="text-xl font-bold text-gray-800 dark:text-white leading-tight">{activePage}</h1>
-                </div>
+                <h1 className="text-xl font-bold text-gray-800 dark:text-white">{activePage}</h1>
             </div>
             <button aria-label="Cambia tema" onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                 {isDarkMode ? <SunIcon /> : <MoonIcon />}
@@ -803,21 +797,12 @@ const App: React.FC = () => {
     };
     
     const handleApartmentNameChange = (id: number, newName: string) => {
-        setApartments(current => {
-            const updated = current.map(apt => apt.id === id ? { ...apt, name: newName } : apt);
-            // Opzionale: se si vuole mantenere ordinato anche al rinomina, decommentare la riga sotto.
-            // return updated.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
-            return updated;
-        });
+        setApartments(current => current.map(apt => apt.id === id ? { ...apt, name: newName } : apt));
     };
 
     const handleAddApartment = () => {
         const newApartment: Apartment = { id: Date.now(), name: "Nuova Struttura" };
-        setApartments(current => {
-            const updated = [...current, newApartment];
-            // Ordina alfabeticamente
-            return updated.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
-        });
+        setApartments(current => [...current, newApartment]);
     };
 
     const handleRemoveApartment = (id: number) => {
@@ -926,7 +911,6 @@ const App: React.FC = () => {
                     onImport={handleImportBackup}
                     onReset={handleFullReset}
                     setActiveMacroCluster={setActiveMacroCluster}
-                    activeMacroCluster={activeMacroCluster}
                 />
             </div>
 
@@ -948,14 +932,12 @@ const App: React.FC = () => {
                     onImport={handleImportBackup}
                     onReset={handleFullReset}
                     setActiveMacroCluster={setActiveMacroCluster}
-                    activeMacroCluster={activeMacroCluster}
                 />
             </div>
 
             <div className="flex flex-col flex-1 w-0">
                 <Header 
                     activePage={activePage}
-                    activeMacroCluster={activeMacroCluster}
                     isSidebarOpen={isSidebarOpen}
                     setIsSidebarOpen={setIsSidebarOpen}
                     isDarkMode={isDarkMode}

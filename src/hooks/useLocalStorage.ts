@@ -22,34 +22,44 @@ export function useLocalStorage<T>(key: string, initialValue: T | (() => T)) {
 
   const [storedValue, setStoredValue] = useState<T>(readValue);
 
+  // Aggiorna lo stato se la chiave cambia (es. cambio cluster)
+  useEffect(() => {
+    setStoredValue(readValue());
+  }, [key, readValue]);
+
   // Funzione per impostare il valore
   const setValue = useCallback((value: T | ((val: T) => T)) => {
     try {
-      const valueToStore = value instanceof Function ? (value as (val: T) => T)(storedValue) : value;
-      
-      setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
-      
-      // Dispatch evento per notificare che un dato è cambiato (per il CloudSync)
-      window.dispatchEvent(new CustomEvent(CHANGE_EVENT_NAME, { detail: { key } }));
-      
-      // Dispatch evento per aggiornare altri hook nella stessa pagina
-      window.dispatchEvent(new CustomEvent(SYNC_EVENT_NAME, { detail: { key, newValue: valueToStore } }));
+      setStoredValue((currentStoredValue) => {
+        const valueToStore = value instanceof Function ? (value as (val: T) => T)(currentStoredValue) : value;
+        
+        try {
+            window.localStorage.setItem(key, JSON.stringify(valueToStore));
+            
+            // Dispatch evento per notificare che un dato è cambiato (per il CloudSync)
+            window.dispatchEvent(new CustomEvent(CHANGE_EVENT_NAME, { detail: { key } }));
+            
+            // Dispatch evento per aggiornare altri hook nella stessa pagina
+            window.dispatchEvent(new CustomEvent(SYNC_EVENT_NAME, { detail: { key, newValue: valueToStore } }));
+        } catch (e) {
+            console.error(`Error saving localStorage key "${key}":`, e);
+        }
+
+        return valueToStore;
+      });
       
     } catch (error) {
-      console.error(`Error saving localStorage key "${key}":`, error);
+      console.error(`Error in setValue for key "${key}":`, error);
     }
-  }, [key, storedValue]);
+  }, [key]);
 
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent | CustomEvent) => {
-      // Gestisce sia eventi storage (altre tab) che eventi custom (stessa tab o sync cloud)
       if ((event as StorageEvent).key === key || (event as CustomEvent).detail?.key === key) {
         setStoredValue(readValue());
       }
     };
 
-    // Ascolta eventi standard storage e custom sync
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener(SYNC_EVENT_NAME, handleStorageChange as EventListener);
 

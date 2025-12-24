@@ -12,11 +12,11 @@ interface PressureLevelConfig {
 }
 
 const pressureLevels: PressureLevelConfig[] = [
-    { id: 'bassissima', label: 'BASSISSIMA', headerColor: 'bg-yellow-400', borderColor: 'border-yellow-400', footerColor: 'bg-yellow-400' },
-    { id: 'bassa', label: 'BASSA', headerColor: 'bg-orange-400', borderColor: 'border-orange-400', footerColor: 'bg-orange-400' },
-    { id: 'media', label: 'MEDIA', headerColor: 'bg-cyan-400', borderColor: 'border-cyan-400', footerColor: 'bg-cyan-400' },
-    { id: 'alta', label: 'ALTA', headerColor: 'bg-green-500', borderColor: 'border-green-500', footerColor: 'bg-green-500' },
-    { id: 'altissima', label: 'ALTISSIMA', headerColor: 'bg-red-600', borderColor: 'border-red-600', footerColor: 'bg-red-600' },
+    { id: 'bassissima', label: 'BASSISSIMA (0-25%)', headerColor: 'bg-[#008000]', borderColor: 'border-[#008000]', footerColor: 'bg-[#008000]' },
+    { id: 'bassa', label: 'BASSA (26-40%)', headerColor: 'bg-[#8fbc8f]', borderColor: 'border-[#8fbc8f]', footerColor: 'bg-[#8fbc8f]' },
+    { id: 'media', label: 'MEDIA (41-65%)', headerColor: 'bg-[#daa520]', borderColor: 'border-[#daa520]', footerColor: 'bg-[#daa520]' },
+    { id: 'alta', label: 'ALTA (66-85%)', headerColor: 'bg-[#ffa500]', borderColor: 'border-[#ffa500]', footerColor: 'bg-[#ffa500]' },
+    { id: 'altissima', label: 'ALTISSIMA (86-100%)', headerColor: 'bg-[#ff4500]', borderColor: 'border-[#ff4500]', footerColor: 'bg-[#ff4500]' },
 ];
 
 interface TabellaPressioneProps {
@@ -64,7 +64,7 @@ const TabellaPressione: React.FC<TabellaPressioneProps> = ({ storagePrefix }) =>
     return (
         <div className="p-6 space-y-8">
             {/* Header Section - Darker background for contrast */}
-            <div className="bg-[#1e293b] text-white p-6 rounded-xl shadow-lg flex flex-col md:flex-row justify-between items-center border border-slate-700">
+            <div className="bg-white dark:bg-[#141414] text-gray-800 dark:text-white p-6 rounded-xl shadow-lg flex flex-col md:flex-row justify-between items-center border border-gray-200 dark:border-slate-700">
                 <div className="mb-4 md:mb-0">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-slate-700 rounded-lg">
@@ -109,14 +109,14 @@ const TabellaPressione: React.FC<TabellaPressioneProps> = ({ storagePrefix }) =>
                 {pressureLevels.map((level) => {
                     const baseRate = baseRates[level.id] || 0;
                     return (
-                        <div key={level.id} className="bg-[#0f172a] rounded-2xl overflow-hidden shadow-2xl border border-slate-800 flex flex-col transform transition-transform hover:-translate-y-1">
+                        <div key={level.id} className="bg-gray-50 dark:bg-[#0d0d0d] rounded-2xl overflow-hidden shadow-2xl border border-gray-200 dark:border-slate-800 flex flex-col transform transition-transform hover:-translate-y-1">
                             {/* Card Header */}
                             <div className={`${level.headerColor} py-4 px-4 text-center shadow-md relative z-10`}>
                                 <h3 className="text-slate-900 font-black text-lg tracking-widest">{level.label}</h3>
                             </div>
 
                             {/* Base Rate Input Area */}
-                            <div className="p-6 flex flex-col items-center border-b border-slate-800 bg-[#1e293b]">
+                            <div className="p-6 flex flex-col items-center border-b border-gray-200 dark:border-slate-800 bg-white dark:bg-[#141414]">
                                 <label className="text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-wider">Tariffa di Partenza</label>
                                 <div className="relative w-full max-w-[120px]">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-lg font-medium">€</span>
@@ -130,7 +130,7 @@ const TabellaPressione: React.FC<TabellaPressioneProps> = ({ storagePrefix }) =>
                             </div>
 
                             {/* Calculation List */}
-                            <div className="p-4 flex-grow space-y-3 bg-[#0f172a]">
+                            <div className="p-4 flex-grow space-y-3 bg-gray-50 dark:bg-[#0d0d0d]">
                                 {Array.from({ length: numBars }, (_, i) => i + 1).map((i) => (
                                     <div key={i} className="flex justify-between items-center text-sm group px-2 py-1 rounded hover:bg-white/5 transition-colors">
                                         <span className="text-slate-500 font-semibold group-hover:text-slate-300 transition-colors text-xs uppercase tracking-wide">BAR {i}</span>

@@ -159,7 +159,7 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
     return (
         <div className="p-6 space-y-8 relative">
              {/* Header Section */}
-            <div className="bg-[#1e293b] text-white p-6 rounded-xl shadow-lg flex flex-col md:flex-row justify-between items-center border border-slate-700">
+            <div className="bg-white dark:bg-[#141414] text-gray-800 dark:text-white p-6 rounded-xl shadow-lg flex flex-col md:flex-row justify-between items-center border border-gray-200 dark:border-slate-700">
                 <div className="mb-4 md:mb-0">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-slate-700 rounded-lg">
@@ -207,7 +207,7 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                 {filteredCompetitors.map((comp, index) => {
                     const style = cardColors[index % cardColors.length];
                     return (
-                        <div key={comp.id} className="bg-[#0f172a] rounded-2xl overflow-hidden shadow-2xl border border-slate-800 flex flex-col transform transition-all hover:-translate-y-1 group relative">
+                        <div key={comp.id} className="bg-gray-50 dark:bg-[#0d0d0d] rounded-2xl overflow-hidden shadow-2xl border border-gray-200 dark:border-slate-800 flex flex-col transform transition-all hover:-translate-y-1 group relative">
                             
                             <button 
                                 onClick={() => handleRemoveCompetitor(comp.id)}
@@ -237,7 +237,7 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                             </div>
 
                             {/* Content */}
-                            <div className="p-6 space-y-4 bg-[#1e293b] flex-grow">
+                            <div className="p-6 space-y-4 bg-white dark:bg-[#141414] flex-grow">
                                 
                                 {/* Row 1: Score & Distance */}
                                 <div className="flex gap-4">
@@ -336,7 +336,7 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                 {/* Add Card Placeholder */}
                  <button 
                     onClick={handleAddCompetitor}
-                    className="bg-[#0f172a]/50 rounded-2xl border-2 border-dashed border-slate-700 flex flex-col items-center justify-center p-10 hover:bg-slate-800/50 hover:border-primary transition-all group min-h-[350px]"
+                    className="bg-gray-100 dark:bg-[#0d0d0d]/50 rounded-2xl border-2 border-dashed border-gray-300 dark:border-slate-700 flex flex-col items-center justify-center p-10 hover:bg-gray-200 dark:hover:bg-slate-800/50 hover:border-primary transition-all group min-h-[350px]"
                 >
                     <div className="bg-slate-800 p-4 rounded-full mb-4 group-hover:bg-primary group-hover:text-white text-slate-500 transition-colors">
                         <PlusCircleIcon className="w-8 h-8" />
@@ -356,10 +356,10 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                 
                 {/* Drawer Panel */}
                 <div className={`absolute inset-y-0 right-0 max-w-full flex transition-transform duration-500 transform ${activeCompetitorId !== null ? 'translate-x-0' : 'translate-x-full'}`}>
-                    <div className="w-screen md:w-[80vw] lg:w-[70vw] bg-[#0f172a] shadow-2xl flex flex-col h-full border-l border-slate-700">
+                    <div className="w-screen md:w-[80vw] lg:w-[70vw] bg-white dark:bg-[#0d0d0d] shadow-2xl flex flex-col h-full border-l border-gray-200 dark:border-slate-700">
                         
                         {/* Drawer Header */}
-                        <div className="flex items-center justify-between px-6 py-6 bg-[#1e293b] border-b border-slate-700">
+                        <div className="flex items-center justify-between px-6 py-6 bg-gray-50 dark:bg-[#141414] border-b border-gray-200 dark:border-slate-700">
                              <div className="flex flex-col">
                                 <div className="flex items-center gap-3 mb-1">
                                     <CalendarIcon className="w-6 h-6 text-cyan-400" />
@@ -378,7 +378,7 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                         <div className="flex flex-1 overflow-hidden">
                             
                             {/* Sidebar Month Selector */}
-                            <div className="w-48 bg-[#1e293b] border-r border-slate-700 overflow-y-auto py-4">
+                            <div className="w-48 bg-gray-100 dark:bg-[#141414] border-r border-gray-200 dark:border-slate-700 overflow-y-auto py-4">
                                 {months.map((month, idx) => (
                                     <button
                                         key={month}
@@ -392,9 +392,9 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                             </div>
 
                             {/* Main Analysis Area */}
-                            <div className="flex-1 overflow-auto p-8 bg-[#0f172a] flex items-start justify-center">
+                            <div className="flex-1 overflow-auto p-8 bg-gray-50 dark:bg-[#0d0d0d] flex items-start justify-center">
                                 {activeCompetitor && (
-                                    <div className="w-full max-w-4xl bg-[#1e293b] rounded-2xl shadow-2xl border border-slate-700 overflow-hidden">
+                                    <div className="w-full max-w-4xl bg-white dark:bg-[#141414] rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden">
                                         <div className="p-6 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
                                             <h3 className="text-xl font-black text-white uppercase tracking-wider">{months[selectedMonthIndex]}</h3>
                                             <div className="px-3 py-1 rounded bg-slate-700 text-cyan-400 text-xs font-bold uppercase tracking-wide border border-slate-600">Dettaglio Periodi</div>
@@ -412,7 +412,7 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                                                 </thead>
                                                 <tbody className="divide-y divide-slate-700">
                                                     {getPricingFor(activeCompetitor.id, selectedMonthIndex).periods.map((period, pIndex) => (
-                                                        <tr key={pIndex} className="hover:bg-slate-800/30 transition-colors bg-[#1e293b]">
+                                                        <tr key={pIndex} className="hover:bg-gray-100 dark:hover:bg-slate-800/30 transition-colors bg-white dark:bg-[#141414]">
                                                             <td className="p-4 font-bold text-cyan-400 border-r border-slate-700 text-center bg-slate-800/20">
                                                                 PERIODO {pIndex + 1}
                                                             </td>

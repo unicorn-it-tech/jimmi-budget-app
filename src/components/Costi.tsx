@@ -201,12 +201,12 @@ const AnalisiComplessiva: React.FC<{
             </div>
             
             {/* Costi Fissi */}
-            <div className="bg-white dark:bg-[#1e293b] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-[#141414] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700">
                 <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4 border-b border-gray-100 dark:border-slate-700 pb-2">Costi Fissi</h3>
                 <div className="overflow-x-auto">
                     <table className="min-w-full text-sm">
                         <thead>
-                            <tr className="bg-gray-50 dark:bg-[#0f172a] border-b border-gray-200 dark:border-slate-700">
+                            <tr className="bg-gray-50 dark:bg-[#0d0d0d] border-b border-gray-200 dark:border-slate-700">
                                 <th className="p-3 text-left font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-1/3">Voce di Costo</th>
                                 <th className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-1/4">Totale Annuo</th>
                                 {showMonths && months.map(m => <th key={m} className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider min-w-[100px]">{m}</th>)}
@@ -236,12 +236,12 @@ const AnalisiComplessiva: React.FC<{
             </div>
 
             {/* Costi Variabili */}
-            <div className="bg-white dark:bg-[#1e293b] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-[#141414] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700">
                 <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4 border-b border-gray-100 dark:border-slate-700 pb-2">Costi Variabili</h3>
                  <div className="overflow-x-auto">
                     <table className="min-w-full text-sm">
                         <thead>
-                            <tr className="bg-gray-50 dark:bg-[#0f172a] border-b border-gray-200 dark:border-slate-700">
+                            <tr className="bg-gray-50 dark:bg-[#0d0d0d] border-b border-gray-200 dark:border-slate-700">
                                 <th className="p-3 text-left font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-1/4">Voce di Costo</th>
                                 <th className="p-3 text-left font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-[150px]">Tipo</th>
                                 <th className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-[120px]">Totale / Tasso %</th>
@@ -301,12 +301,12 @@ const AnalisiComplessiva: React.FC<{
             </div>
 
              {/* Riepilogo Redditività */}
-            <div className="bg-white dark:bg-[#1e293b] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-[#141414] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700">
                 <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4 border-b border-gray-100 dark:border-slate-700 pb-2">Riepilogo Redditività</h3>
                 <div className="overflow-x-auto">
                     <table className="min-w-full text-sm">
                         <thead>
-                            <tr className="bg-gray-50 dark:bg-[#0f172a] border-b border-gray-200 dark:border-slate-700">
+                            <tr className="bg-gray-50 dark:bg-[#0d0d0d] border-b border-gray-200 dark:border-slate-700">
                                 <th className="p-3 text-left font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-1/4">Voce</th>
                                 <th className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-[150px]">Totale Annuo</th>
                                 {showMonths && months.map(m => <th key={m} className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider min-w-[100px]">{m}</th>)}
@@ -325,12 +325,12 @@ const AnalisiComplessiva: React.FC<{
             </div>
 
             {/* Tariffa Bottom Rate */}
-            <div className="bg-white dark:bg-[#1e293b] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-[#141414] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700">
                 <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4 border-b border-gray-100 dark:border-slate-700 pb-2">Tariffa Bottom Rate</h3>
                 <div className="overflow-x-auto">
                     <table className="min-w-full text-sm">
                         <thead>
-                            <tr className="bg-gray-50 dark:bg-[#0f172a] border-b border-gray-200 dark:border-slate-700">
+                            <tr className="bg-gray-50 dark:bg-[#0d0d0d] border-b border-gray-200 dark:border-slate-700">
                                 <th className="p-3 text-left font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-1/4">Voce</th>
                                 <th className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-[150px]">Media Annuale</th>
                                 {showMonths && months.map(m => <th key={m} className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider min-w-[100px]">{m}</th>)}
@@ -482,7 +482,7 @@ const AnalisiSelettiva: React.FC<{ apartments: Apartment[]; onBack: () => void; 
                          <button 
                             key={apt.id}
                             onClick={() => setSelectedApt(apt)}
-                            className="group flex flex-col items-center justify-center text-center p-8 bg-white dark:bg-[#1e293b] rounded-2xl shadow-lg border border-gray-200 dark:border-slate-700 hover:border-primary dark:hover:border-teal-400 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                            className="group flex flex-col items-center justify-center text-center p-8 bg-white dark:bg-[#141414] rounded-2xl shadow-lg border border-gray-200 dark:border-slate-700 hover:border-primary dark:hover:border-teal-400 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
                          >
                             <div className="bg-gray-100 dark:bg-slate-800 p-4 rounded-full mb-4 group-hover:bg-primary/10 transition-colors">
                                 <BuildingIcon className="w-10 h-10 text-gray-500 dark:text-slate-400 group-hover:text-primary transition-colors" />
@@ -504,10 +504,10 @@ const AnalisiSelettiva: React.FC<{ apartments: Apartment[]; onBack: () => void; 
              <h2 className="text-3xl font-black text-gray-800 dark:text-white mb-8 tracking-tight">Gestione Costi: <span className="text-primary">{selectedApt.name}</span></h2>
              
              {/* Costi Fissi */}
-             <div className="bg-white dark:bg-[#1e293b] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700">
+             <div className="bg-white dark:bg-[#141414] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700">
                 <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4 border-b border-gray-100 dark:border-slate-700 pb-2">Costi Fissi</h3>
                 <table className="w-full text-sm">
-                    <thead><tr className="bg-gray-50 dark:bg-[#0f172a] border-b border-gray-200 dark:border-slate-700"><th className="p-3 text-left font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Voce di Costo</th><th className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Totale Annuo</th></tr></thead>
+                    <thead><tr className="bg-gray-50 dark:bg-[#0d0d0d] border-b border-gray-200 dark:border-slate-700"><th className="p-3 text-left font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Voce di Costo</th><th className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Totale Annuo</th></tr></thead>
                     <tbody>
                         {currentCosts.fixedCosts.map(c => (
                             <tr key={c.id} className="border-b border-gray-100 dark:border-slate-700/50 hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors group"><td className="p-3 flex items-center gap-2"><button onClick={() => removeFixedCost(selectedApt.id, c.id)} className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"><TrashIcon className="w-4 h-4"/></button><input type="text" value={c.name} onChange={e => handleFixedCostChange(selectedApt.id, c.id, 'name', e.target.value)} className="w-full bg-transparent p-1 rounded focus:outline-none focus:ring-1 focus:ring-primary focus:bg-white dark:focus:bg-slate-800 text-gray-800 dark:text-slate-200 font-medium"/></td><td className="p-3"><input type="text" value={c.annualAmount.toString().replace('.',',')} onChange={e => handleFixedCostChange(selectedApt.id, c.id, 'annualAmount', e.target.value)} className="w-full bg-transparent p-1 rounded text-right focus:outline-none focus:ring-1 focus:ring-primary text-gray-800 dark:text-slate-200 font-bold"/></td></tr>
@@ -518,10 +518,10 @@ const AnalisiSelettiva: React.FC<{ apartments: Apartment[]; onBack: () => void; 
             </div>
 
             {/* Costi Variabili */}
-            <div className="bg-white dark:bg-[#1e293b] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-x-auto">
+            <div className="bg-white dark:bg-[#141414] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-x-auto">
                 <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4 border-b border-gray-100 dark:border-slate-700 pb-2">Costi Variabili</h3>
                 <table className="w-full text-sm min-w-[1200px]">
-                    <thead><tr className="bg-gray-50 dark:bg-[#0f172a] border-b border-gray-200 dark:border-slate-700"><th className="p-3 text-left font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-1/4">Voce</th><th className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Totale</th>{months.map(m => <th key={m} className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">{m}</th>)}</tr></thead>
+                    <thead><tr className="bg-gray-50 dark:bg-[#0d0d0d] border-b border-gray-200 dark:border-slate-700"><th className="p-3 text-left font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-1/4">Voce</th><th className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Totale</th>{months.map(m => <th key={m} className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">{m}</th>)}</tr></thead>
                     <tbody>
                         {currentCosts.variableCosts.map(c => (
                              <tr key={c.id} className="border-b border-gray-100 dark:border-slate-700/50 hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors group"><td className="p-3 flex items-center gap-2"><button onClick={() => removeVariableCost(selectedApt.id, c.id)} className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"><TrashIcon className="w-4 h-4"/></button><input type="text" value={c.name} onChange={e => handleVariableCostChange(selectedApt.id, c.id, 'name', e.target.value)} className="w-full bg-transparent p-1 rounded focus:outline-none focus:ring-1 focus:ring-primary focus:bg-white dark:focus:bg-slate-800 text-gray-800 dark:text-slate-200 font-medium"/></td><td className="p-3 text-right font-bold text-gray-800 dark:text-slate-200">{formatCurrency(c.values[0])}</td>{c.values.slice(1).map((val, i) => <td key={i} className="p-3"><input type="text" value={val.toString().replace('.',',')} onChange={e => handleVariableCostValueChange(selectedApt.id, c.id, i + 1, e.target.value)} className="w-full bg-transparent p-1 rounded text-right focus:outline-none focus:ring-1 focus:ring-primary text-gray-600 dark:text-slate-400"/></td>)}</tr>
@@ -532,10 +532,10 @@ const AnalisiSelettiva: React.FC<{ apartments: Apartment[]; onBack: () => void; 
             </div>
             
             {/* Riepilogo Costi Struttura */}
-            <div className="bg-white dark:bg-[#1e293b] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-x-auto">
+            <div className="bg-white dark:bg-[#141414] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-x-auto">
                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4 border-b border-gray-100 dark:border-slate-700 pb-2">Riepilogo Costi: {selectedApt.name}</h3>
                  <table className="w-full text-sm min-w-[1200px]">
-                     <thead><tr className="bg-gray-50 dark:bg-[#0f172a] border-b border-gray-200 dark:border-slate-700"><th className="p-3 text-left font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-1/4">Voce</th><th className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Totale Annuo</th>{months.map(m => <th key={m} className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">{m}</th>)}</tr></thead>
+                     <thead><tr className="bg-gray-50 dark:bg-[#0d0d0d] border-b border-gray-200 dark:border-slate-700"><th className="p-3 text-left font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-1/4">Voce</th><th className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Totale Annuo</th>{months.map(m => <th key={m} className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">{m}</th>)}</tr></thead>
                      <tbody>
                         <tr className="border-b border-gray-100 dark:border-slate-700/50 hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors"><td className="p-3 pl-6 text-gray-600 dark:text-slate-300">Costi Fissi</td><td className="p-3 text-right font-medium text-gray-700 dark:text-slate-300">{formatCurrency(calculations?.totalFixed[0] || 0)}</td>{calculations?.totalFixed.slice(1).map((val, i) => <td key={i} className="p-3 text-right text-gray-500 dark:text-slate-500">{formatCurrency(val)}</td>)}</tr>
                         <tr className="border-b border-gray-100 dark:border-slate-700/50 hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors"><td className="p-3 pl-6 text-gray-600 dark:text-slate-300">Costi Variabili</td><td className="p-3 text-right font-medium text-gray-700 dark:text-slate-300">{formatCurrency(calculations?.totalVariable[0] || 0)}</td>{calculations?.totalVariable.slice(1).map((val, i) => <td key={i} className="p-3 text-right text-gray-500 dark:text-slate-500">{formatCurrency(val)}</td>)}</tr>
@@ -545,10 +545,10 @@ const AnalisiSelettiva: React.FC<{ apartments: Apartment[]; onBack: () => void; 
             </div>
 
              {/* Analisi Redditività */}
-             <div className="bg-white dark:bg-[#1e293b] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-x-auto">
+             <div className="bg-white dark:bg-[#141414] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-x-auto">
                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4 border-b border-gray-100 dark:border-slate-700 pb-2">Analisi Redditività: {selectedApt.name}</h3>
                  <table className="w-full text-sm min-w-[1200px]">
-                     <thead><tr className="bg-gray-50 dark:bg-[#0f172a] border-b border-gray-200 dark:border-slate-700"><th className="p-3 text-left font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-1/4">Voce</th><th className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Totale Annuo</th>{months.map(m => <th key={m} className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">{m}</th>)}</tr></thead>
+                     <thead><tr className="bg-gray-50 dark:bg-[#0d0d0d] border-b border-gray-200 dark:border-slate-700"><th className="p-3 text-left font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-1/4">Voce</th><th className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Totale Annuo</th>{months.map(m => <th key={m} className="p-3 text-right font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">{m}</th>)}</tr></thead>
                      <tbody>
                         <tr className="bg-yellow-50 dark:bg-yellow-900/10 border-b border-yellow-100 dark:border-slate-700">
                             <td className="p-3 font-bold text-yellow-900 dark:text-yellow-500">Notti Aperte</td>
@@ -595,7 +595,7 @@ const Costi: React.FC<CostiProps> = ({ forecastRevenue, availableNightsData, for
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl">
                     <button
                         onClick={() => setAnalysisType('complessiva')}
-                        className="group flex flex-col items-center justify-center text-center p-10 bg-white dark:bg-[#1e293b] rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 hover:border-primary dark:hover:border-teal-400 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
+                        className="group flex flex-col items-center justify-center text-center p-10 bg-white dark:bg-[#141414] rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 hover:border-primary dark:hover:border-teal-400 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
                     >
                         <div className="bg-primary/10 p-6 rounded-full mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:bg-primary/20">
                             <ChartIcon className="w-16 h-16 text-primary" />
@@ -609,7 +609,7 @@ const Costi: React.FC<CostiProps> = ({ forecastRevenue, availableNightsData, for
                     </button>
                     <button
                         onClick={() => setAnalysisType('selettiva')}
-                        className="group flex flex-col items-center justify-center text-center p-10 bg-white dark:bg-[#1e293b] rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 hover:border-primary dark:hover:border-teal-400 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
+                        className="group flex flex-col items-center justify-center text-center p-10 bg-white dark:bg-[#141414] rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 hover:border-primary dark:hover:border-teal-400 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
                     >
                          <div className="bg-primary/10 p-6 rounded-full mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:bg-primary/20">
                             <UsersIcon className="w-16 h-16 text-primary" />

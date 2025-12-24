@@ -52,12 +52,12 @@ const getCellClasses = (value: any, isLabel: boolean, colIndex: number, row: Met
 
     // Base styling for label vs data cells
     if (isLabel) {
-        classes.push('text-left', 'text-gray-600', 'dark:text-slate-400', 'bg-white', 'dark:bg-[#1e293b]', 'border-r', 'dark:border-slate-700');
+        classes.push('text-left', 'text-gray-600', 'dark:text-slate-400', 'bg-white', 'dark:bg-[#141414]', 'border-r', 'dark:border-slate-700');
         if (bold) {
             classes.push('font-bold', 'text-gray-800', 'dark:text-slate-200');
         }
     } else {
-        classes.push('text-right', 'text-gray-800', 'dark:text-slate-200', 'bg-white', 'dark:bg-[#1e293b]', 'border-r', 'dark:border-slate-700/50', 'last:border-0');
+        classes.push('text-right', 'text-gray-800', 'dark:text-slate-200', 'bg-white', 'dark:bg-[#141414]', 'border-r', 'dark:border-slate-700/50', 'last:border-0');
     }
 
     if (bold) {
@@ -295,7 +295,7 @@ const Monitoring: React.FC<MonitoringProps> = ({ forecastData, budgetData, saved
     return (
         <div className="p-4 sm:p-6 md:p-8 space-y-8">
             {tableSections.map((section, sectionIndex) => (
-                <div key={sectionIndex} className="bg-white dark:bg-[#1e293b] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700">
+                <div key={sectionIndex} className="bg-white dark:bg-[#141414] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700">
                     <div className="flex justify-between items-center mb-6 px-2">
                         <h3 className="text-xl font-bold text-gray-800 dark:text-white tracking-tight">{section.title}</h3>
                         <div className="flex items-center gap-3">
@@ -344,10 +344,10 @@ const Monitoring: React.FC<MonitoringProps> = ({ forecastData, budgetData, saved
                         )}
                         <table className="w-full border-collapse text-xs table-fixed min-w-[1800px]">
                             <thead>
-                                <tr className="bg-gray-50 dark:bg-[#0f172a]">
-                                    <th className="sticky top-0 left-0 z-20 p-3 border-b border-r border-gray-200 dark:border-slate-700 text-left w-[250px] font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider bg-gray-50 dark:bg-[#0f172a]"></th>
+                                <tr className="bg-gray-50 dark:bg-[#0d0d0d]">
+                                    <th className="sticky top-0 left-0 z-20 p-3 border-b border-r border-gray-200 dark:border-slate-700 text-left w-[250px] font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider bg-gray-50 dark:bg-[#0d0d0d]"></th>
                                     {headers.map((header) => (
-                                        <th key={header} className="sticky top-0 z-10 p-3 border-b border-r border-gray-200 dark:border-slate-700 font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-[120px] text-center bg-gray-50 dark:bg-[#0f172a] last:border-r-0">
+                                        <th key={header} className="sticky top-0 z-10 p-3 border-b border-r border-gray-200 dark:border-slate-700 font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-[120px] text-center bg-gray-50 dark:bg-[#0d0d0d] last:border-r-0">
                                             {header}
                                         </th>
                                     ))}

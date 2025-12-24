@@ -198,7 +198,7 @@ const BudgetPlanner: React.FC<BudgetPlannerProps> = ({ apartments, year, onUpdat
 
     const renderRow = (label: string, data: (number | string)[], total: number | string, formatter: (val: number) => string, customRowClass = "") => (
          <tr className={`border-b border-gray-100 dark:border-slate-700/50 last:border-0 hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors ${customRowClass}`}>
-            <td className={`sticky left-0 z-10 py-3 px-4 font-bold text-left text-xs text-gray-600 dark:text-slate-400 uppercase tracking-wider bg-white dark:bg-[#1e293b] border-r border-gray-100 dark:border-slate-700/50`}>{label}</td>
+            <td className={`sticky left-0 z-10 py-3 px-4 font-bold text-left text-xs text-gray-600 dark:text-slate-400 uppercase tracking-wider bg-white dark:bg-[#141414] border-r border-gray-100 dark:border-slate-700/50`}>{label}</td>
             <td className={`py-3 px-4 font-bold text-center text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-slate-900/50 border-r border-gray-100 dark:border-slate-700/50`}>{typeof total === 'number' ? formatter(total) : total}</td>
             {data.map((val, i) => (
                 <td key={i} className="py-3 px-4 text-center text-sm text-gray-700 dark:text-slate-300 border-r border-gray-100 dark:border-slate-700/50 last:border-0">{typeof val === 'number' ? formatter(val) : val}</td>
@@ -208,7 +208,7 @@ const BudgetPlanner: React.FC<BudgetPlannerProps> = ({ apartments, year, onUpdat
     
     const renderInputRow = (label: string, data: number[], total: number | string, formatter: (val: number) => string, type: keyof typeof budgetData, options: { isPercentage?: boolean, isCurrency?: boolean } = {}) => (
         <tr className="border-b border-gray-100 dark:border-slate-700/50 last:border-0 bg-yellow-50/50 dark:bg-yellow-900/10 hover:bg-yellow-100/50 dark:hover:bg-yellow-900/20 transition-colors">
-            <td className="sticky left-0 z-10 py-3 px-4 font-bold text-left text-xs text-gray-600 dark:text-slate-400 uppercase tracking-wider bg-yellow-50/90 dark:bg-[#1e293b] border-r border-gray-100 dark:border-slate-700/50 backdrop-blur-sm">{label}</td>
+            <td className="sticky left-0 z-10 py-3 px-4 font-bold text-left text-xs text-gray-600 dark:text-slate-400 uppercase tracking-wider bg-yellow-50/90 dark:bg-[#141414] border-r border-gray-100 dark:border-slate-700/50 backdrop-blur-sm">{label}</td>
             <td className="py-3 px-4 font-bold text-center text-sm text-gray-900 dark:text-white bg-yellow-100/50 dark:bg-yellow-900/30 border-r border-gray-100 dark:border-slate-700/50">{typeof total === 'number' ? formatter(total) : total}</td>
             {data.map((val, i) => (
                 <td key={i} className="py-3 px-2 text-center text-sm border-r border-gray-100 dark:border-slate-700/50 last:border-0">
@@ -231,7 +231,7 @@ const BudgetPlanner: React.FC<BudgetPlannerProps> = ({ apartments, year, onUpdat
 
     return (
         <div className="p-4 sm:p-6 md:p-8 relative overflow-hidden">
-            <div className="bg-white dark:bg-[#1e293b] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-x-auto">
+            <div className="bg-white dark:bg-[#141414] p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-x-auto">
                 <div className="flex justify-between items-center mb-6 px-2">
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white tracking-tight">Budget Planner</h2>
                     <div className="flex items-center gap-4">
@@ -260,8 +260,8 @@ const BudgetPlanner: React.FC<BudgetPlannerProps> = ({ apartments, year, onUpdat
 
                 <table className="min-w-full border-collapse">
                     <thead>
-                        <tr className="bg-gray-50 dark:bg-[#0f172a] border-b border-gray-200 dark:border-slate-700">
-                            <th className="sticky left-0 z-20 py-4 px-4 text-left font-bold text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wider w-52 bg-gray-50 dark:bg-[#0f172a] border-r border-gray-200 dark:border-slate-700">RICAVI VENDITA</th>
+                        <tr className="bg-gray-50 dark:bg-[#0d0d0d] border-b border-gray-200 dark:border-slate-700">
+                            <th className="sticky left-0 z-20 py-4 px-4 text-left font-bold text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wider w-52 bg-gray-50 dark:bg-[#0d0d0d] border-r border-gray-200 dark:border-slate-700">RICAVI VENDITA</th>
                             <th className="py-4 px-4 text-center font-bold text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wider w-36 border-r border-gray-200 dark:border-slate-700">TOTALE</th>
                             {months.map(m => (
                                 <th key={m} className="py-4 px-4 text-center font-bold text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wider w-32 border-r border-gray-200 dark:border-slate-700 last:border-0">{m}</th>
@@ -270,7 +270,7 @@ const BudgetPlanner: React.FC<BudgetPlannerProps> = ({ apartments, year, onUpdat
                     </thead>
                     <tbody>
                         <tr className="bg-gray-50 dark:bg-slate-900/20 border-b border-gray-200 dark:border-slate-700">
-                            <td className="sticky left-0 z-10 py-3 px-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider bg-gray-50 dark:bg-[#1e293b] border-r border-gray-200 dark:border-slate-700">Unità n.</td>
+                            <td className="sticky left-0 z-10 py-3 px-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider bg-gray-50 dark:bg-[#141414] border-r border-gray-200 dark:border-slate-700">Unità n.</td>
                             <td className="py-3 px-4 text-center text-sm border-r border-gray-200 dark:border-slate-700"></td>
                              {monthlyUnits.map((units, i) => (
                                 <td key={i} className="py-3 px-2 text-center text-sm font-bold bg-yellow-50 dark:bg-yellow-900/20 border-r border-gray-200 dark:border-slate-700 last:border-0">
@@ -304,9 +304,9 @@ const BudgetPlanner: React.FC<BudgetPlannerProps> = ({ apartments, year, onUpdat
             </div>
 
             {/* Log Panel */}
-            <div className={`fixed top-0 right-0 h-full w-full max-w-md bg-white dark:bg-[#1e293b] shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${isLogVisible ? 'translate-x-0' : 'translate-x-full'} border-l border-gray-200 dark:border-slate-700`}>
+            <div className={`fixed top-0 right-0 h-full w-full max-w-md bg-white dark:bg-[#141414] shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${isLogVisible ? 'translate-x-0' : 'translate-x-full'} border-l border-gray-200 dark:border-slate-700`}>
                 <div className="flex flex-col h-full">
-                    <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-[#0f172a]">
+                    <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-[#0d0d0d]">
                         <h3 className="text-lg font-bold text-gray-800 dark:text-white">Log Eventi</h3>
                         <button onClick={() => setIsLogVisible(false)} className="p-2 text-gray-500 hover:text-gray-800 dark:text-slate-400 dark:hover:text-white rounded-full hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors">
                             <XIcon className="w-6 h-6" />
@@ -316,7 +316,7 @@ const BudgetPlanner: React.FC<BudgetPlannerProps> = ({ apartments, year, onUpdat
                         <ul className="space-y-6">
                             {logEntries.map((entry, index) => (
                                 <li key={index} className="relative pl-6 border-l-2 border-gray-200 dark:border-slate-700">
-                                    <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 border-white dark:border-[#1e293b] ${index === 0 ? 'bg-primary' : 'bg-gray-300 dark:bg-slate-600'}`}></div>
+                                    <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 border-white dark:border-[#141414] ${index === 0 ? 'bg-primary' : 'bg-gray-300 dark:bg-slate-600'}`}></div>
                                     <p className="text-sm font-medium text-gray-800 dark:text-slate-200">{entry.description}</p>
                                     <p className="text-xs text-gray-500 dark:text-slate-500 mt-1 font-mono">
                                         {entry.timestamp.toLocaleDateString('it-IT')} - {entry.timestamp.toLocaleTimeString('it-IT')}

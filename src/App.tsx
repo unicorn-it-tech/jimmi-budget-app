@@ -248,8 +248,8 @@ const NavLink: React.FC<{name: string, icon: React.ReactElement<{ className?: st
         }}
         className={`flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200 ${
             isActive
-                ? 'bg-primary text-white shadow-sm'
-                : 'text-blue-100 dark:text-gray-300 hover:bg-blue-700 dark:hover:bg-dark-secondary'
+                ? 'bg-white/20 dark:bg-primary text-white shadow-sm'
+                : 'text-green-100 dark:text-gray-300 hover:bg-primary-light dark:hover:bg-dark-secondary'
         }`}
     >
         {React.cloneElement(icon, { className: "w-5 h-5 mr-3" })}
@@ -275,17 +275,18 @@ interface SidebarProps {
     setActiveMacroCluster: (name: string) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ 
+const Sidebar: React.FC<SidebarProps> = ({
     navigationData, openMacroClusters, openClusters, activePage,
     toggleMacroCluster, toggleCluster, setActivePage, setIsSidebarOpen,
     handleCreateCluster, openRenameModal, openDeleteModal,
     onExport, onImport, onReset, setActiveMacroCluster
 }) => {
     return (
-        <aside className="flex flex-col w-64 h-full px-4 py-8 bg-blue-800 dark:bg-gray-800 border-r border-blue-900 dark:border-gray-700 overflow-y-auto">
-            <h2 className="text-2xl font-bold text-white px-2">
-                Budget App
-            </h2>
+        <aside className="flex flex-col w-64 h-full px-4 py-8 bg-primary dark:bg-black border-r border-primary-dark dark:border-dark-border overflow-y-auto">
+            <div className="px-2">
+                <h2 className="text-2xl font-bold text-white">Jimmmi</h2>
+                <span className="text-xs text-green-200/70 font-medium">by qualityhost</span>
+            </div>
 
             <div className="mt-6">
                 <button
@@ -303,19 +304,19 @@ const Sidebar: React.FC<SidebarProps> = ({
                         const isMacroOpen = openMacroClusters.includes(macroCluster.name);
                         return (
                             <div key={macroCluster.name}>
-                                <div className="w-full flex items-center justify-between text-sm font-semibold text-blue-100 dark:text-gray-200 uppercase tracking-wider rounded-lg bg-blue-900 dark:bg-dark-secondary mb-1 overflow-hidden group">
+                                <div className="w-full flex items-center justify-between text-sm font-semibold text-white dark:text-gray-200 uppercase tracking-wider rounded-lg bg-primary-dark dark:bg-dark-card mb-1 overflow-hidden group">
                                     <button
                                         onClick={() => toggleMacroCluster(macroCluster.name)}
-                                        className="flex-grow flex items-center justify-between px-2 py-3 focus:outline-none hover:bg-blue-800 dark:hover:bg-gray-700 transition-colors"
+                                        className="flex-grow flex items-center justify-between px-2 py-3 focus:outline-none hover:bg-primary dark:hover:bg-dark-secondary transition-colors"
                                     >
                                         <span className="truncate">{macroCluster.name}</span>
                                         <ChevronDownIcon className={`w-5 h-5 transition-transform duration-200 flex-shrink-0 ${isMacroOpen ? 'rotate-180' : ''}`} />
                                     </button>
                                     <div className="flex items-center pr-2 gap-1">
-                                        <button onClick={(e) => { e.stopPropagation(); openRenameModal(macroCluster.name); }} className="p-1 text-blue-300 hover:text-white dark:text-gray-400 dark:hover:text-white rounded hover:bg-blue-700/50 dark:hover:bg-gray-600/50 transition-colors" title="Rinomina">
+                                        <button onClick={(e) => { e.stopPropagation(); openRenameModal(macroCluster.name); }} className="p-1 text-green-100 hover:text-white dark:text-gray-400 dark:hover:text-white rounded hover:bg-primary/50 dark:hover:bg-dark-secondary transition-colors" title="Rinomina">
                                             <PencilIcon className="w-4 h-4" />
                                         </button>
-                                        <button onClick={(e) => { e.stopPropagation(); openDeleteModal(macroCluster.name); }} className="p-1 text-blue-300 hover:text-red-400 dark:text-gray-400 dark:hover:text-red-400 rounded hover:bg-blue-700/50 dark:hover:bg-gray-600/50 transition-colors" title="Elimina">
+                                        <button onClick={(e) => { e.stopPropagation(); openDeleteModal(macroCluster.name); }} className="p-1 text-green-100 hover:text-red-400 dark:text-gray-400 dark:hover:text-red-400 rounded hover:bg-primary/50 dark:hover:bg-dark-secondary transition-colors" title="Elimina">
                                             <TrashIcon className="w-4 h-4" />
                                         </button>
                                     </div>
@@ -328,7 +329,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                                                 <div key={cluster.name}>
                                                     <button
                                                         onClick={() => toggleCluster(cluster.name)}
-                                                        className="w-full flex items-center justify-between px-2 py-2 text-xs font-semibold text-blue-200 dark:text-gray-400 uppercase tracking-wider rounded-lg hover:bg-blue-700 dark:hover:bg-dark-secondary focus:outline-none"
+                                                        className="w-full flex items-center justify-between px-2 py-2 text-xs font-semibold text-green-100 dark:text-gray-400 uppercase tracking-wider rounded-lg hover:bg-primary-light dark:hover:bg-dark-secondary focus:outline-none"
                                                     >
                                                         <span>{cluster.name}</span>
                                                         <ChevronDownIcon className={`w-5 h-5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
@@ -362,24 +363,24 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
 
             {/* Import / Export / Reset Footer */}
-            <div className="mt-auto pt-6 px-2 border-t border-blue-900 dark:border-gray-700 space-y-3">
+            <div className="mt-auto pt-6 px-2 border-t border-primary-dark dark:border-dark-border space-y-3">
                 <CloudSync />
-                
-                <h3 className="text-xs font-bold text-blue-300 dark:text-gray-500 uppercase tracking-wider px-2">Gestione Backup</h3>
+
+                <h3 className="text-xs font-bold text-green-200 dark:text-gray-500 uppercase tracking-wider px-2">Gestione Backup</h3>
                 <div className="flex flex-col gap-2">
-                    <button 
+                    <button
                         onClick={onExport}
-                        className="w-full flex items-center justify-center gap-2 bg-blue-700/50 hover:bg-blue-600 dark:bg-gray-700 dark:hover:bg-gray-600 text-white py-2 px-4 rounded-lg text-xs font-bold transition-colors"
+                        className="w-full flex items-center justify-center gap-2 bg-primary-dark/50 hover:bg-primary-light dark:bg-dark-card dark:hover:bg-dark-secondary text-white py-2 px-4 rounded-lg text-xs font-bold transition-colors"
                     >
                         <DownloadIcon className="w-4 h-4" />
                         ESPORTA JSON
                     </button>
-                    <label className="w-full flex items-center justify-center gap-2 bg-teal-600/80 hover:bg-teal-500 dark:bg-teal-900/50 dark:hover:bg-teal-800 text-white py-2 px-4 rounded-lg text-xs font-bold transition-colors cursor-pointer">
+                    <label className="w-full flex items-center justify-center gap-2 bg-primary-light hover:bg-primary dark:bg-primary/50 dark:hover:bg-primary text-white py-2 px-4 rounded-lg text-xs font-bold transition-colors cursor-pointer">
                         <CloudUploadIcon className="w-4 h-4" />
                         RIPRISTINA JSON
                         <input type="file" onChange={onImport} className="hidden" accept=".json" />
                     </label>
-                    <button 
+                    <button
                         onClick={onReset}
                         className="w-full flex items-center justify-center gap-2 bg-red-600/80 hover:bg-red-500 dark:bg-red-900/50 dark:hover:bg-red-800 text-white py-2 px-4 rounded-lg text-xs font-bold transition-colors mt-2"
                     >
@@ -392,20 +393,29 @@ const Sidebar: React.FC<SidebarProps> = ({
     );
 };
 
-const Header: React.FC<{ activePage: string; isSidebarOpen: boolean; setIsSidebarOpen: (v: boolean) => void; isDarkMode: boolean; setIsDarkMode: (v: boolean) => void }> = ({ activePage, isSidebarOpen, setIsSidebarOpen, isDarkMode, setIsDarkMode }) => (
-    <header className="bg-white dark:bg-gray-800 shadow-sm z-10 border-b dark:border-gray-700">
+const Header: React.FC<{ activePage: string; isSidebarOpen: boolean; setIsSidebarOpen: (v: boolean) => void; isDarkMode: boolean; setIsDarkMode: (v: boolean) => void; isSidebarCollapsed: boolean; setIsSidebarCollapsed: (v: boolean) => void }> = ({ activePage, isSidebarOpen, setIsSidebarOpen, isDarkMode, setIsDarkMode, isSidebarCollapsed, setIsSidebarCollapsed }) => (
+    <header className="bg-white dark:bg-dark-card shadow-sm z-10 border-b dark:border-dark-border">
         <div className="container mx-auto px-4 md:px-8 py-4 flex justify-between items-center">
             <div className="flex items-center gap-4">
-                    <button
+                {/* Mobile menu button */}
+                <button
                     aria-label="Apri menu"
                     className="text-gray-500 dark:text-gray-400 focus:outline-none md:hidden"
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 >
                     {isSidebarOpen ? <XIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
                 </button>
+                {/* Desktop sidebar toggle */}
+                <button
+                    aria-label={isSidebarCollapsed ? "Mostra sidebar" : "Nascondi sidebar"}
+                    className="hidden md:flex text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary focus:outline-none p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-secondary transition-colors"
+                    onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                >
+                    {isSidebarCollapsed ? <MenuIcon className="w-5 h-5" /> : <ChevronDownIcon className="w-5 h-5 -rotate-90" />}
+                </button>
                 <h1 className="text-xl font-bold text-gray-800 dark:text-white">{activePage}</h1>
             </div>
-            <button aria-label="Cambia tema" onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <button aria-label="Cambia tema" onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-secondary">
                 {isDarkMode ? <SunIcon /> : <MoonIcon />}
             </button>
         </div>
@@ -515,6 +525,7 @@ const App: React.FC = () => {
     const [activeMacroCluster, setActiveMacroCluster] = useLocalStorage<string>('budget-app-active-macro-cluster', 'cluster');
     const [isDarkMode, setIsDarkMode] = useLocalStorage<boolean>('budget-app-dark-mode', false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useLocalStorage<boolean>('budget-app-sidebar-collapsed', false);
     const [openClusters, setOpenClusters] = useLocalStorage<string[]>('budget-app-open-clusters', ['Pianificazione Mensile']);
     const [openMacroClusters, setOpenMacroClusters] = useLocalStorage<string[]>('budget-app-open-macro-clusters', ['cluster']);
     const [navigationData, setNavigationData] = useLocalStorage('budget-app-navigation', initialNavigationConfig);
@@ -718,23 +729,23 @@ const App: React.FC = () => {
     }, [isDarkMode]);
 
     useEffect(() => {
-        let found = false;
-        for (const macro of navigationData) {
-            for (const sub of macro.clusters) {
+        // Only auto-open the cluster that contains the active page
+        // within the currently selected macro cluster
+        const currentMacro = navigationData.find(m => m.name === activeMacroCluster);
+        if (currentMacro) {
+            for (const sub of currentMacro.clusters) {
                 if (sub.children.some((child: any) => child.name === activePage)) {
-                    if (!openMacroClusters.includes(macro.name)) {
-                        setOpenMacroClusters(prev => [...prev, macro.name]);
+                    if (!openMacroClusters.includes(currentMacro.name)) {
+                        setOpenMacroClusters(prev => [...prev, currentMacro.name]);
                     }
                     if (!openClusters.includes(sub.name)) {
                         setOpenClusters(prev => [...prev, sub.name]);
                     }
-                    found = true;
                     break;
                 }
             }
-            if (found) break;
         }
-    }, [activePage]);
+    }, [activePage, activeMacroCluster]);
     
     const handleCreateCluster = () => {
         setIsCreateClusterModalOpen(true);
@@ -894,7 +905,7 @@ const App: React.FC = () => {
 
     return (
         <div className="flex h-screen bg-light dark:bg-dark text-gray-900 dark:text-gray-100 font-sans">
-            <div className="hidden md:flex md:flex-shrink-0">
+            <div className={`hidden md:flex md:flex-shrink-0 transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'w-0 overflow-hidden' : 'w-64'}`}>
                 <Sidebar 
                     navigationData={navigationData}
                     openMacroClusters={openMacroClusters}
@@ -936,12 +947,14 @@ const App: React.FC = () => {
             </div>
 
             <div className="flex flex-col flex-1 w-0">
-                <Header 
+                <Header
                     activePage={activePage}
                     isSidebarOpen={isSidebarOpen}
                     setIsSidebarOpen={setIsSidebarOpen}
                     isDarkMode={isDarkMode}
                     setIsDarkMode={setIsDarkMode}
+                    isSidebarCollapsed={isSidebarCollapsed}
+                    setIsSidebarCollapsed={setIsSidebarCollapsed}
                 />
                 <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none">
                    <PageContent 

@@ -150,12 +150,12 @@ const RateStrategyPlanner: React.FC<RateStrategyPlannerProps> = ({
     const inputClasses = "w-full bg-transparent text-center focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:bg-white focus:text-gray-900 dark:focus:bg-slate-800 dark:focus:text-gray-100 rounded p-1 text-sm font-medium";
 
     return (
-        <div className="mt-8 bg-white dark:bg-[#1e293b] p-1 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-x-auto">
+        <div className="mt-8 bg-white dark:bg-[#141414] p-1 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-x-auto">
             <div className="p-6 border-b border-gray-200 dark:border-slate-700 mb-4">
                 <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-white tracking-tight">Legenda Pressione</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
                     {pressureSettings.map(setting => (
-                        <div key={setting.level} className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-[#0f172a]">
+                        <div key={setting.level} className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-[#0d0d0d]">
                             <span className={`w-6 h-6 rounded-full border-2 border-white dark:border-slate-500 shadow-sm flex-shrink-0 ${setting.color}`}></span>
                             <div className="flex flex-col">
                                 <span className="text-sm font-bold text-gray-800 dark:text-white capitalize">
@@ -173,12 +173,12 @@ const RateStrategyPlanner: React.FC<RateStrategyPlannerProps> = ({
             <div className="min-w-[2800px] text-xs relative">
                 <table className="w-full border-collapse text-center table-fixed">
                     <thead>
-                        <tr ref={pressureRowRef} className="bg-[#0f172a]">
-                            <th className="p-3 border-b border-r border-gray-200 dark:border-slate-700 text-left w-[250px] font-bold text-white uppercase tracking-wider">Pressione</th>
+                        <tr ref={pressureRowRef} className="bg-gray-100 dark:bg-[#0d0d0d]">
+                            <th className="p-3 border-b border-r border-gray-200 dark:border-slate-700 text-left w-[250px] font-bold text-gray-800 dark:text-white uppercase tracking-wider">Pressione</th>
                             {days.map((d, index) => (
                                 <th key={d.dayNum} 
                                     onClick={(e) => handlePressureCellClick(e, index)}
-                                    className={`p-3 border-b border-r border-gray-200 dark:border-slate-700 transition-all w-[65px] cursor-pointer hover:brightness-110 ${pressureColors[index] || 'bg-slate-800'}`}
+                                    className={`p-3 border-b border-r border-gray-200 dark:border-slate-700 transition-all w-[65px] cursor-pointer hover:brightness-110 ${pressureColors[index] || 'bg-amber-50 dark:bg-gray-600'}`}
                                     aria-label={`Imposta colore per giorno ${d.dayNum}`}
                                 >
                                     <div className="h-6 w-full rounded-sm" />
@@ -188,18 +188,18 @@ const RateStrategyPlanner: React.FC<RateStrategyPlannerProps> = ({
                         </tr>
                     </thead>
                     <tbody>
-                        <tr className="bg-blue-900 text-white border-b border-blue-800">
-                            <td className="p-3 border-r border-blue-800 text-left font-bold uppercase tracking-wider">Occupazione Prevista</td>
+                        <tr className="bg-primary text-white border-b border-primary-dark">
+                            <td className="p-3 border-r border-primary-dark text-left font-bold uppercase tracking-wider">Occupazione Prevista</td>
                             {days.map(d => (
-                                <td key={d.dayNum} className="p-1 border-r border-blue-800">
+                                <td key={d.dayNum} className="p-1 border-r border-primary-dark">
                                     <div className="relative">
                                          <input
                                             type="number"
                                             value={occupancy[d.dayNum - 1] || ''}
                                             onChange={(e) => onDataChange('occupancy', d.dayNum - 1, null, e.target.value)}
-                                            className={`${inputClasses} pr-5 text-white placeholder-blue-300 font-bold bg-blue-800/50 border border-blue-700 hover:bg-blue-700/50 focus:ring-blue-400`}
+                                            className={`${inputClasses} pr-5 text-white placeholder-green-200 font-bold bg-primary-light/50 border border-primary-light hover:bg-primary-light/70 focus:ring-primary-light`}
                                         />
-                                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-300 text-[10px] pointer-events-none">%</span>
+                                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-green-200 text-[10px] pointer-events-none">%</span>
                                     </div>
                                 </td>
                             ))}
@@ -244,7 +244,7 @@ const RateStrategyPlanner: React.FC<RateStrategyPlannerProps> = ({
                             )
                         })}
                         {/* Summary Rows */}
-                        <tr className="font-bold bg-gray-100 dark:bg-[#0f172a] border-t-2 border-gray-300 dark:border-slate-600 text-gray-800 dark:text-slate-200">
+                        <tr className="font-bold bg-gray-100 dark:bg-[#0d0d0d] border-t-2 border-gray-300 dark:border-slate-600 text-gray-800 dark:text-slate-200">
                             <td className="p-3 border-r border-gray-300 dark:border-slate-600 text-left uppercase text-xs tracking-wider">notti previste</td>
                              {days.map((d, index) => (
                                 <td key={d.dayNum} className="p-3 border-r border-gray-300 dark:border-slate-600 text-gray-600 dark:text-slate-400">
@@ -255,7 +255,7 @@ const RateStrategyPlanner: React.FC<RateStrategyPlannerProps> = ({
                                 {formatNumber(forecastedCalculations.totaleNottiPreviste, { decimals: 1 })}
                             </td>
                         </tr>
-                        <tr className="font-bold bg-gray-100 dark:bg-[#0f172a] border-t border-gray-300 dark:border-slate-600 text-gray-800 dark:text-slate-200">
+                        <tr className="font-bold bg-gray-100 dark:bg-[#0d0d0d] border-t border-gray-300 dark:border-slate-600 text-gray-800 dark:text-slate-200">
                             <td className="p-3 border-r border-gray-300 dark:border-slate-600 text-left uppercase text-xs tracking-wider">fatturato del giorno</td>
                             {days.map((d, index) => (
                                 <td key={d.dayNum} className="p-3 border-r border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white">
@@ -284,7 +284,7 @@ const RateStrategyPlanner: React.FC<RateStrategyPlannerProps> = ({
                             left: `${pickerPosition.left}px`,
                             transform: 'translateX(-50%) translateY(4px)',
                         }}
-                        className="z-30 bg-white dark:bg-[#1e293b] shadow-2xl rounded-xl border border-gray-200 dark:border-slate-600 p-3 flex gap-2 items-center ring-1 ring-black/5"
+                        className="z-30 bg-white dark:bg-[#141414] shadow-2xl rounded-xl border border-gray-200 dark:border-slate-600 p-3 flex gap-2 items-center ring-1 ring-black/5"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {pressureSettings.map((setting) => (

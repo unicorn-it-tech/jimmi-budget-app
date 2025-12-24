@@ -15,8 +15,8 @@ interface CellData {
 export const legendItems = [
     { name: 'BOOKING', color: 'bg-blue-300' },
     { name: 'AIRBNB', color: 'bg-red-400' },
-    { name: 'HOMEAWAY', color: 'bg-green-400' },
-    { name: 'DIRETTE', color: 'bg-yellow-400' },
+    { name: 'HOMEAWAY', color: 'bg-yellow-400' },
+    { name: 'DIRETTE', color: 'bg-green-400' },
     { name: 'EXPEDIA', color: 'bg-orange-400' },
     { name: 'ALTRO', color: 'bg-gray-400' },
 ];
@@ -93,17 +93,23 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
     const [editorSelectedColor, setEditorSelectedColor] = useState("");
     const [editorPrice, setEditorPrice] = useState("");
 
+    // Drag-to-copy state (Excel-like propagation)
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragSource, setDragSource] = useState<{ aptId: number; dayNum: number } | null>(null);
+    const [dragTarget, setDragTarget] = useState<number | null>(null); // target day number
+    const tableRef = useRef<HTMLTableElement>(null);
+
     const editorRef = useRef<HTMLDivElement>(null);
     const { days, daysInMonth } = getMonthData(month, year);
     const [isImporterOpen, setIsImporterOpen] = useState(false);
     
     const [rateStrategyData, setRateStrategyData] = useLocalStorage(`${storagePrefix}-rate-strategy-${currentMonthKey}`, {
         pressureSettings: [
-            { level: 'Bassissima', min: 0, max: 20, color: 'bg-yellow-300', label: 'Giallo: bassissima pressione (0-20%)' },
-            { level: 'Bassa', min: 21, max: 35, color: 'bg-orange-400', label: 'Arancione: bassa pressione (21-35%)' },
-            { level: 'Media', min: 36, max: 55, color: 'bg-blue-400', label: 'Blu: media pressione (36-55%)' },
-            { level: 'Alta', min: 56, max: 80, color: 'bg-green-400', label: 'Verde: alta pressione (56-80%)' },
-            { level: 'Altissima', min: 81, max: 100, color: 'bg-red-500', label: 'Rossa: altissima pressione (81-100%)' },
+            { level: 'Bassissima', min: 0, max: 25, color: 'bg-[#008000]', label: 'Verde scuro: bassissima pressione (0-25%)' },
+            { level: 'Bassa', min: 26, max: 40, color: 'bg-[#8fbc8f]', label: 'Verde chiaro: bassa pressione (26-40%)' },
+            { level: 'Media', min: 41, max: 65, color: 'bg-[#daa520]', label: 'Giallo: media pressione (41-65%)' },
+            { level: 'Alta', min: 66, max: 85, color: 'bg-[#ffa500]', label: 'Arancione: alta pressione (66-85%)' },
+            { level: 'Altissima', min: 86, max: 100, color: 'bg-[#ff4500]', label: 'Rosso: altissima pressione (86-100%)' },
         ],
         occupancy: [10,0,10,10,0,0,0,10,10,0,0,10,10,0,0,0,0,10,10,0,0,0,0,10,10,0,0,0,0,10,10],
         masterPrices: [60,60,65,65,65,65,65,65,60,60,60,65,65,60,60,60,60,60,60,65,65,60,60,60,60,60,60,65,65,60,60],
@@ -389,7 +395,92 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
         setEditorPrice("");
         setActiveCell(null);
     };
-    
+
+    // Drag-to-copy handlers (Excel-like propagation)
+    const handleDragStart = (e: React.MouseEvent, aptId: number, dayNum: number) => {
+        const key = `${aptId}-${dayNum}`;
+        const sourceData = cellData[key];
+
+        // Solo inizia drag se la cella ha dati (colore e prezzo)
+        if (sourceData && sourceData.color && sourceData.price && sourceData.price > 0) {
+            e.preventDefault();
+            setIsDragging(true);
+            setDragSource({ aptId, dayNum });
+            setDragTarget(dayNum);
+        }
+    };
+
+    const handleDragMove = (e: React.MouseEvent, aptId: number, dayNum: number) => {
+        if (!isDragging || !dragSource) return;
+
+        // Solo stesso appartamento (propagazione orizzontale)
+        if (aptId === dragSource.aptId) {
+            setDragTarget(dayNum);
+        }
+    };
+
+    const handleDragEnd = () => {
+        if (!isDragging || !dragSource || dragTarget === null) {
+            setIsDragging(false);
+            setDragSource(null);
+            setDragTarget(null);
+            return;
+        }
+
+        const sourceKey = `${dragSource.aptId}-${dragSource.dayNum}`;
+        const sourceData = cellData[sourceKey];
+
+        if (sourceData) {
+            const startDay = Math.min(dragSource.dayNum, dragTarget);
+            const endDay = Math.max(dragSource.dayNum, dragTarget);
+
+            setAllCellData(prev => {
+                const currentMonthData = { ...(prev[currentMonthKey] || {}) };
+
+                for (let day = startDay; day <= endDay; day++) {
+                    if (day !== dragSource.dayNum) {
+                        const key = `${dragSource.aptId}-${day}`;
+                        currentMonthData[key] = {
+                            color: sourceData.color,
+                            price: sourceData.price
+                        };
+                    }
+                }
+
+                return { ...prev, [currentMonthKey]: currentMonthData };
+            });
+        }
+
+        setIsDragging(false);
+        setDragSource(null);
+        setDragTarget(null);
+    };
+
+    // Check if cell is in drag selection
+    const isCellInDragSelection = (aptId: number, dayNum: number) => {
+        if (!isDragging || !dragSource || dragTarget === null) return false;
+        if (aptId !== dragSource.aptId) return false;
+
+        const startDay = Math.min(dragSource.dayNum, dragTarget);
+        const endDay = Math.max(dragSource.dayNum, dragTarget);
+
+        return dayNum >= startDay && dayNum <= endDay;
+    };
+
+    // Add global mouseup listener for drag
+    useEffect(() => {
+        const handleGlobalMouseUp = () => {
+            if (isDragging) {
+                handleDragEnd();
+            }
+        };
+
+        document.addEventListener('mouseup', handleGlobalMouseUp);
+        return () => {
+            document.removeEventListener('mouseup', handleGlobalMouseUp);
+        };
+    }, [isDragging, dragSource, dragTarget, cellData, currentMonthKey]);
+
     const getCellContent = (data: CellData | undefined) => {
         if (!data) return '';
         if (data.price && data.price > 0) {
@@ -424,24 +515,24 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
 
     return (
         <div className="p-4 sm:p-6 md:p-8 space-y-8">
-            <div className="bg-white dark:bg-[#1e293b] p-1 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-x-auto">
+            <div className="bg-white dark:bg-[#141414] p-1 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-x-auto">
                 <div className="min-w-[2800px] text-xs">
                     <table className="w-full border-collapse text-center table-fixed">
-                        <thead>
+                        <thead className="sticky top-0 z-10">
                             <tr>
-                                <th className="p-2 border-b border-r border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-[#0f172a] text-left w-[250px]">
+                                <th className="p-2 border-b border-r border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-black text-left w-[250px]">
                                     <span className="text-gray-500 dark:text-slate-400 font-bold uppercase tracking-wider">Unit sell day</span>
                                 </th>
                                 {days.map(d => (
-                                    <th key={d.dayNum} className="p-2 border-b border-r border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-[#0f172a] font-bold text-gray-700 dark:text-slate-200 w-[65px]">
+                                    <th key={d.dayNum} className="p-2 border-b border-r border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-black font-bold text-gray-700 dark:text-slate-200 w-[65px]">
                                         {dailyCalculations[d.dayNum].soldNights}
                                     </th>
                                 ))}
-                                <th className="p-2 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-[#0f172a] align-top" colSpan={6} rowSpan={3}>
+                                <th className="p-2 border-b border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-black align-top" colSpan={6} rowSpan={3}>
                                     <div className="flex justify-center items-start p-1">
                                         <div>
                                             <div className="font-bold mb-2 text-center text-xs uppercase tracking-widest text-gray-500 dark:text-slate-400">Legenda</div>
-                                            <div className="grid grid-cols-2 gap-2 w-full p-2 border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-[#1e293b]">
+                                            <div className="grid grid-cols-2 gap-2 w-full p-2 border border-gray-200 dark:border-dark-border rounded-lg bg-white dark:bg-dark-card">
                                                 {legendItems.map(item => (
                                                     <div key={item.name} className={`p-1.5 text-center text-white text-[10px] font-bold uppercase tracking-wider ${item.color} rounded-md shadow-sm`}>{item.name}</div>
                                                 ))}
@@ -451,52 +542,52 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
                                 </th>
                             </tr>
                              <tr>
-                                <th className="p-2 border-b border-r border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-[#0f172a] text-left">
+                                <th className="p-2 border-b border-r border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-black text-left">
                                      <span className="text-gray-500 dark:text-slate-400 font-bold uppercase tracking-wider">Unit rev day</span>
                                 </th>
                                 {days.map(d => (
-                                    <th key={d.dayNum} className="p-2 border-b border-r border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-[#0f172a] text-gray-700 dark:text-slate-200 font-semibold">
+                                    <th key={d.dayNum} className="p-2 border-b border-r border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-black text-gray-700 dark:text-slate-200 font-semibold">
                                         {formatNumber(dailyCalculations[d.dayNum].revenue, { decimals: 0 })}
                                     </th>
                                 ))}
                             </tr>
                              <tr>
-                                <th className="p-2 border-b border-r border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-[#0f172a] text-left">
+                                <th className="p-2 border-b border-r border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-black text-left">
                                     <span className="text-gray-500 dark:text-slate-400 font-bold uppercase tracking-wider">RevPar day</span>
                                 </th>
                                 {days.map(d => (
-                                    <th key={d.dayNum} className="p-2 border-b border-r border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-[#0f172a] text-gray-700 dark:text-slate-200 font-semibold">
+                                    <th key={d.dayNum} className="p-2 border-b border-r border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-black text-gray-700 dark:text-slate-200 font-semibold">
                                         {formatNumber(dailyCalculations[d.dayNum].revPar)}
                                     </th>
                                 ))}
                             </tr>
                             <tr className="font-bold">
-                                <th className="p-3 border-b border-r border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-[#0f172a] align-bottom" rowSpan={2}>
+                                <th className="p-3 border-b border-r border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-black align-bottom" rowSpan={2}>
                                     <div className="flex items-center justify-between text-gray-800 dark:text-white">
-                                        <button onClick={onPreviousYear} aria-label="Anno precedente" className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors">
+                                        <button onClick={onPreviousYear} aria-label="Anno precedente" className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-dark-secondary transition-colors">
                                             <ChevronLeftIcon className="w-5 h-5" />
                                         </button>
                                         <div className="text-center">
                                             <span className="text-xl font-black tracking-tight block">{month}</span>
                                             <span className="block text-sm font-medium text-gray-500 dark:text-slate-400">{year}</span>
                                         </div>
-                                        <button onClick={onNextYear} aria-label="Anno successivo" className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors">
+                                        <button onClick={onNextYear} aria-label="Anno successivo" className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-dark-secondary transition-colors">
                                             <ChevronRightIcon className="w-5 h-5" />
                                         </button>
                                     </div>
                                 </th>
                                 {days.map((d) => (
-                                    <th key={d.dayNum} className={`p-2 border-b border-r border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-[#0f172a] ${d.isWeekend ? 'text-red-500 dark:text-red-400' : 'text-gray-600 dark:text-slate-300'}`}>
+                                    <th key={d.dayNum} className={`p-2 border-b border-r border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-black ${d.isWeekend ? 'text-red-500 dark:text-red-400' : 'text-gray-600 dark:text-slate-300'}`}>
                                         {d.dayLetter}
                                     </th>
                                 ))}
                                 {["Notti Vendute", "% Occupazione", "ADR", "Revenue Totale", "RevPar", "Extra"].map(h => (
-                                    <th key={h} className="p-2 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-[#0f172a] w-[85px] text-[10px] uppercase tracking-wider text-gray-500 dark:text-slate-400">{h}</th>
+                                    <th key={h} className="p-2 border-b border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-black w-[85px] text-[10px] uppercase tracking-wider text-gray-500 dark:text-slate-400">{h}</th>
                                 ))}
                             </tr>
                             <tr className="font-bold">
                                 {days.map(d => (
-                                    <th key={d.dayNum} className={`p-2 border-b border-r border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-[#0f172a] ${d.isWeekend ? 'text-red-500 dark:text-red-400' : 'text-gray-600 dark:text-slate-300'}`}>
+                                    <th key={d.dayNum} className={`p-2 border-b border-r border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-black ${d.isWeekend ? 'text-red-500 dark:text-red-400' : 'text-gray-600 dark:text-slate-300'}`}>
                                         {d.dayNum}
                                     </th>
                                 ))}
@@ -508,7 +599,7 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
                                 const hasData = summary.nottiVendute > 0;
                                 return (
                                 <tr key={apt.id} className="group border-b border-gray-100 dark:border-slate-700/50 hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
-                                    <td className="p-2 border-r border-gray-200 dark:border-slate-700 text-left bg-white dark:bg-[#1e293b] group-hover:bg-gray-50 dark:group-hover:bg-slate-800/50 transition-colors">
+                                    <td className="p-2 border-r border-gray-200 dark:border-slate-700 text-left bg-white dark:bg-[#141414] group-hover:bg-gray-50 dark:group-hover:bg-slate-800/50 transition-colors">
                                         <div className="flex items-center gap-2">
                                             <input
                                                 type="text"
@@ -525,16 +616,31 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
                                         const key = `${apt.id}-${d.dayNum}`;
                                         const data = cellData[key];
                                         const content = getCellContent(data);
-                                        
+
                                         const isBooked = data && data.color && data.price && data.price > 0;
+                                        const isInDragSelection = isCellInDragSelection(apt.id, d.dayNum);
+                                        const isDragSourceCell = dragSource?.aptId === apt.id && dragSource?.dayNum === d.dayNum;
 
                                         const textClass = isBooked ? 'font-bold text-black' : 'text-gray-400 dark:text-slate-600';
-                                        const cellBgClass = isBooked 
-                                            ? data.color 
+                                        const cellBgClass = isBooked
+                                            ? data.color
                                             : 'bg-transparent';
 
+                                        // Drag selection visual feedback
+                                        const dragSelectionClass = isInDragSelection && !isDragSourceCell
+                                            ? 'ring-2 ring-inset ring-primary bg-primary/20'
+                                            : isDragSourceCell && isDragging
+                                            ? 'ring-2 ring-inset ring-primary'
+                                            : '';
+
                                         return (
-                                            <td key={d.dayNum} onClick={(e) => handleCellClick(e, apt.id, d.dayNum)} className={`p-1 border-r border-gray-200 dark:border-slate-700 text-[10px] whitespace-nowrap cursor-pointer transition-all duration-150 ${cellBgClass} hover:bg-gray-100 dark:hover:bg-slate-700/50 relative`}>
+                                            <td
+                                                key={d.dayNum}
+                                                onClick={(e) => !isDragging && handleCellClick(e, apt.id, d.dayNum)}
+                                                onMouseDown={(e) => handleDragStart(e, apt.id, d.dayNum)}
+                                                onMouseMove={(e) => handleDragMove(e, apt.id, d.dayNum)}
+                                                className={`p-1 border-r border-gray-200 dark:border-slate-700 text-[10px] whitespace-nowrap cursor-pointer transition-all duration-150 ${cellBgClass} hover:bg-gray-100 dark:hover:bg-slate-700/50 relative select-none ${dragSelectionClass}`}
+                                            >
                                                 <div className={`h-full w-full truncate ${textClass}`}>{content}</div>
                                             </td>
                                         )
@@ -562,7 +668,7 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
                         </tbody>
                     </table>
                 </div>
-                <div className="p-4 flex flex-wrap gap-4 bg-gray-50 dark:bg-[#0f172a] border-t border-gray-200 dark:border-slate-700">
+                <div className="p-4 flex flex-wrap gap-4 bg-gray-50 dark:bg-[#0d0d0d] border-t border-gray-200 dark:border-slate-700">
                     <button onClick={onAddApartment} className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-primary rounded-lg shadow-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-slate-900 transition-all">
                         <PlusIcon className="w-5 h-5" />
                         <span>AGGIUNGI STRUTTURA</span>
@@ -603,7 +709,7 @@ const MonthlyPlanner: React.FC<MonthlyPlannerProps> = ({
                 <div 
                     ref={editorRef} 
                     style={{ top: editorPosition.top, left: editorPosition.left, minWidth: editorPosition.width }} 
-                    className="fixed z-20 bg-white dark:bg-[#1e293b] shadow-2xl rounded-xl border border-gray-200 dark:border-slate-600 p-4 flex flex-col gap-3 ring-1 ring-black/5"
+                    className="fixed z-20 bg-white dark:bg-[#141414] shadow-2xl rounded-xl border border-gray-200 dark:border-slate-600 p-4 flex flex-col gap-3 ring-1 ring-black/5"
                 >
                     <select
                         value={editorSelectedColor}

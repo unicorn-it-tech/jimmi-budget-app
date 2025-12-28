@@ -284,8 +284,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     return (
         <aside className="flex flex-col w-64 h-full px-4 py-8 bg-primary dark:bg-black border-r border-primary-dark dark:border-dark-border overflow-y-auto">
             <div className="px-2">
-                <h2 className="text-2xl font-bold text-white">Jimmmi</h2>
-                <span className="text-xs text-green-200/70 font-medium">by qualityhost</span>
+                <h2 className="text-2xl font-bold text-white">Jimmi</h2>
+                <span className="text-xs text-green-200/70 font-medium">by Quality Host</span>
             </div>
 
             <div className="mt-6">

@@ -316,9 +316,9 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                                 
                                 {/* Action Button */}
                                 <div className="pt-2">
-                                     <button 
+                                     <button
                                         onClick={() => { setActiveCompetitorId(comp.id); }}
-                                        className={`w-full flex items-center justify-center gap-2 py-2 rounded-lg font-bold text-sm uppercase tracking-wide transition-all shadow-lg bg-slate-700 hover:bg-slate-600 text-white border border-slate-600 hover:border-${style.text.replace('text-', '')}`}
+                                        className={`w-full flex items-center justify-center gap-2 py-2 rounded-lg font-bold text-sm uppercase tracking-wide transition-all shadow-lg bg-amber-50 dark:bg-slate-700 hover:bg-amber-100 dark:hover:bg-slate-600 text-gray-800 dark:text-white border border-amber-200 dark:border-slate-600`}
                                     >
                                         <ChartIcon className={`w-4 h-4 ${style.text}`} />
                                         Analisi Tariffe

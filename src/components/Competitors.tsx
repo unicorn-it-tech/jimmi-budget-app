@@ -347,7 +347,7 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
             </div>
 
             {/* SIDE DRAWER FOR SINGLE COMPETITOR ANALYSIS */}
-            <div className={`fixed inset-0 z-50 overflow-hidden ${activeCompetitorId !== null ? 'pointer-events-auto' : 'pointer-events-none'}`}>
+            <div className={`fixed inset-0 z-[100] overflow-hidden ${activeCompetitorId !== null ? 'pointer-events-auto' : 'pointer-events-none'}`}>
                 {/* Backdrop */}
                 <div 
                     className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-500 ${activeCompetitorId !== null ? 'opacity-100' : 'opacity-0'}`}

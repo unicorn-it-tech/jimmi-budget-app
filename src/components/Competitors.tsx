@@ -162,12 +162,12 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
             <div className="bg-white dark:bg-[#141414] text-gray-800 dark:text-white p-6 rounded-xl shadow-lg flex flex-col md:flex-row justify-between items-center border border-gray-200 dark:border-slate-700">
                 <div className="mb-4 md:mb-0">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-slate-700 rounded-lg">
-                             <UsersIcon className="w-6 h-6 text-cyan-400" />
+                        <div className="p-2 bg-amber-50 dark:bg-slate-700 rounded-lg border border-amber-200 dark:border-transparent">
+                             <UsersIcon className="w-6 h-6 text-primary dark:text-cyan-400" />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold text-white">Analisi Competitors</h2>
-                            <p className="text-slate-400 text-sm mt-1">Monitora le strutture concorrenti e le loro performance.</p>
+                            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Analisi Competitors</h2>
+                            <p className="text-gray-500 dark:text-slate-400 text-sm mt-1">Monitora le strutture concorrenti e le loro performance.</p>
                         </div>
                     </div>
                 </div>
@@ -178,7 +178,7 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                         <select
                             value={selectedCluster}
                             onChange={(e) => setSelectedCluster(e.target.value)}
-                            className="bg-slate-900 text-white px-4 py-2 rounded-lg border border-slate-600 focus:outline-none focus:border-cyan-400 text-sm font-bold h-[42px]"
+                            className="bg-amber-50 dark:bg-slate-900 text-gray-800 dark:text-white px-4 py-2 rounded-lg border border-amber-200 dark:border-slate-600 focus:outline-none focus:border-primary dark:focus:border-cyan-400 text-sm font-bold h-[42px]"
                         >
                             <option value="Tutti">Tutti i Cluster</option>
                             {clusters.map(c => <option key={c} value={c}>{c}</option>)}
@@ -187,8 +187,8 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                     
                     <div className="flex flex-col items-end">
                          <label className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Totale Monitorati</label>
-                        <div className="flex items-center bg-slate-900 px-4 rounded-lg border border-slate-600 h-[42px]">
-                            <span className="text-cyan-400 font-bold text-xl">{filteredCompetitors.length}</span>
+                        <div className="flex items-center bg-amber-50 dark:bg-slate-900 px-4 rounded-lg border border-amber-200 dark:border-slate-600 h-[42px]">
+                            <span className="text-primary dark:text-cyan-400 font-bold text-xl">{filteredCompetitors.length}</span>
                         </div>
                     </div>
 

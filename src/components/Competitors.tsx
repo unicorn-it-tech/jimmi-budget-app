@@ -251,7 +251,7 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                                                 step="0.1"
                                                 value={comp.score}
                                                 onChange={(e) => handleChange(comp.id, 'score', e.target.value)}
-                                                className={`w-full bg-slate-900 text-white text-center font-bold py-2 rounded-lg border border-slate-700 focus:outline-none focus:ring-1 ${style.ring} transition-all shadow-inner`}
+                                                className={`w-full bg-amber-50 dark:bg-slate-900 text-gray-800 dark:text-white text-center font-bold py-2 rounded-lg border border-amber-200 dark:border-slate-700 focus:outline-none focus:ring-1 ${style.ring} transition-all shadow-inner`}
                                             />
                                         </div>
                                     </div>
@@ -265,7 +265,7 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                                                 step="0.1"
                                                 value={comp.distance}
                                                 onChange={(e) => handleChange(comp.id, 'distance', e.target.value)}
-                                                className={`w-full bg-slate-900 text-white text-center font-bold py-2 rounded-lg border border-slate-700 focus:outline-none focus:ring-1 ${style.ring} transition-all shadow-inner`}
+                                                className={`w-full bg-amber-50 dark:bg-slate-900 text-gray-800 dark:text-white text-center font-bold py-2 rounded-lg border border-amber-200 dark:border-slate-700 focus:outline-none focus:ring-1 ${style.ring} transition-all shadow-inner`}
                                             />
                                         </div>
                                     </div>
@@ -280,7 +280,7 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                                             type="number"
                                             value={comp.avgRate}
                                             onChange={(e) => handleChange(comp.id, 'avgRate', e.target.value)}
-                                            className={`w-full bg-slate-900 text-white text-center text-xl font-bold py-2 rounded-lg border border-slate-700 focus:outline-none focus:ring-1 ${style.ring} transition-all shadow-inner`}
+                                            className={`w-full bg-amber-50 dark:bg-slate-900 text-gray-800 dark:text-white text-center text-xl font-bold py-2 rounded-lg border border-amber-200 dark:border-slate-700 focus:outline-none focus:ring-1 ${style.ring} transition-all shadow-inner`}
                                         />
                                      </div>
                                 </div>
@@ -288,8 +288,8 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                                 {/* Link */}
                                 <div>
                                     <label className="text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-wider block">Link OTA / Sito</label>
-                                    <div className="flex items-center bg-slate-900 rounded-lg border border-slate-700 overflow-hidden">
-                                        <div className="pl-3 text-slate-500">
+                                    <div className="flex items-center bg-amber-50 dark:bg-slate-900 rounded-lg border border-amber-200 dark:border-slate-700 overflow-hidden">
+                                        <div className="pl-3 text-gray-500 dark:text-slate-500">
                                             <LinkIcon className="w-4 h-4" />
                                         </div>
                                         <input
@@ -297,7 +297,7 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                                             value={comp.url}
                                             onChange={(e) => handleChange(comp.id, 'url', e.target.value)}
                                             placeholder="https://..."
-                                            className="w-full bg-transparent text-slate-300 text-xs py-2 px-3 focus:outline-none"
+                                            className="w-full bg-transparent text-gray-800 dark:text-slate-300 text-xs py-2 px-3 focus:outline-none"
                                         />
                                     </div>
                                 </div>
@@ -309,7 +309,7 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                                         value={comp.note}
                                         onChange={(e) => handleChange(comp.id, 'note', e.target.value)}
                                         rows={2}
-                                        className="w-full bg-slate-900 text-slate-300 text-xs py-2 px-3 rounded-lg border border-slate-700 focus:outline-none focus:border-slate-500 resize-none"
+                                        className="w-full bg-amber-50 dark:bg-slate-900 text-gray-800 dark:text-slate-300 text-xs py-2 px-3 rounded-lg border border-amber-200 dark:border-slate-700 focus:outline-none focus:border-amber-300 dark:focus:border-slate-500 resize-none"
                                         placeholder="Osservazioni..."
                                     />
                                 </div>

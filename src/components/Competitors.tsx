@@ -362,14 +362,14 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                         <div className="flex items-center justify-between px-6 py-6 bg-gray-50 dark:bg-[#141414] border-b border-gray-200 dark:border-slate-700">
                              <div className="flex flex-col">
                                 <div className="flex items-center gap-3 mb-1">
-                                    <CalendarIcon className="w-6 h-6 text-cyan-400" />
-                                    <h2 className="text-2xl font-bold text-white tracking-wide">Analisi Tariffe Mensili</h2>
+                                    <CalendarIcon className="w-6 h-6 text-primary dark:text-cyan-400" />
+                                    <h2 className="text-2xl font-bold text-gray-800 dark:text-white tracking-wide">Analisi Tariffe Mensili</h2>
                                 </div>
                                 {activeCompetitor && (
-                                    <span className="text-slate-400 font-medium text-sm ml-9">Competitor: <span className="text-white font-bold">{activeCompetitor.name}</span></span>
+                                    <span className="text-gray-500 dark:text-slate-400 font-medium text-sm ml-9">Competitor: <span className="text-gray-800 dark:text-white font-bold">{activeCompetitor.name}</span></span>
                                 )}
                              </div>
-                            <button onClick={() => setActiveCompetitorId(null)} className="text-slate-400 hover:text-white transition-colors p-2 hover:bg-slate-700 rounded-full">
+                            <button onClick={() => setActiveCompetitorId(null)} className="text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white transition-colors p-2 hover:bg-amber-100 dark:hover:bg-slate-700 rounded-full">
                                 <XIcon className="w-6 h-6" />
                             </button>
                         </div>
@@ -383,7 +383,7 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                                     <button
                                         key={month}
                                         onClick={() => setSelectedMonthIndex(idx)}
-                                        className={`w-full text-left px-6 py-4 text-sm font-bold uppercase tracking-wider transition-all flex items-center justify-between group ${selectedMonthIndex === idx ? 'bg-slate-800 text-cyan-400 border-r-4 border-cyan-400' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'}`}
+                                        className={`w-full text-left px-6 py-4 text-sm font-bold uppercase tracking-wider transition-all flex items-center justify-between group ${selectedMonthIndex === idx ? 'bg-amber-100 dark:bg-slate-800 text-primary dark:text-cyan-400 border-r-4 border-primary dark:border-cyan-400' : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white hover:bg-amber-50 dark:hover:bg-slate-800/50'}`}
                                     >
                                         {month}
                                         {selectedMonthIndex === idx && <ChevronRightIcon className="w-4 h-4" />}
@@ -395,53 +395,53 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                             <div className="flex-1 overflow-auto p-8 bg-gray-50 dark:bg-[#0d0d0d] flex items-start justify-center">
                                 {activeCompetitor && (
                                     <div className="w-full max-w-4xl bg-white dark:bg-[#141414] rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden">
-                                        <div className="p-6 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
-                                            <h3 className="text-xl font-black text-white uppercase tracking-wider">{months[selectedMonthIndex]}</h3>
-                                            <div className="px-3 py-1 rounded bg-slate-700 text-cyan-400 text-xs font-bold uppercase tracking-wide border border-slate-600">Dettaglio Periodi</div>
+                                        <div className="p-6 bg-amber-50 dark:bg-slate-800 border-b border-amber-200 dark:border-slate-700 flex justify-between items-center">
+                                            <h3 className="text-xl font-black text-gray-800 dark:text-white uppercase tracking-wider">{months[selectedMonthIndex]}</h3>
+                                            <div className="px-3 py-1 rounded bg-amber-100 dark:bg-slate-700 text-primary dark:text-cyan-400 text-xs font-bold uppercase tracking-wide border border-amber-200 dark:border-slate-600">Dettaglio Periodi</div>
                                         </div>
                                         
                                         <div className="p-0">
                                             <table className="w-full text-sm text-left border-collapse">
                                                 <thead>
-                                                    <tr className="bg-slate-900 text-xs uppercase tracking-wider text-slate-400">
-                                                        <th className="p-4 border-b border-r border-slate-700 w-1/4 text-center">Periodo</th>
-                                                        <th className="p-4 border-b border-r border-slate-700 w-1/4 text-center">Dal Giorno</th>
-                                                        <th className="p-4 border-b border-r border-slate-700 w-1/4 text-center">Al Giorno</th>
-                                                        <th className="p-4 border-b border-slate-700 w-1/4 text-center">Prezzo (€)</th>
+                                                    <tr className="bg-amber-100 dark:bg-slate-900 text-xs uppercase tracking-wider text-gray-600 dark:text-slate-400">
+                                                        <th className="p-4 border-b border-r border-amber-200 dark:border-slate-700 w-1/4 text-center">Periodo</th>
+                                                        <th className="p-4 border-b border-r border-amber-200 dark:border-slate-700 w-1/4 text-center">Dal Giorno</th>
+                                                        <th className="p-4 border-b border-r border-amber-200 dark:border-slate-700 w-1/4 text-center">Al Giorno</th>
+                                                        <th className="p-4 border-b border-amber-200 dark:border-slate-700 w-1/4 text-center">Prezzo (€)</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody className="divide-y divide-slate-700">
+                                                <tbody className="divide-y divide-amber-200 dark:divide-slate-700">
                                                     {getPricingFor(activeCompetitor.id, selectedMonthIndex).periods.map((period, pIndex) => (
-                                                        <tr key={pIndex} className="hover:bg-gray-100 dark:hover:bg-slate-800/30 transition-colors bg-white dark:bg-[#141414]">
-                                                            <td className="p-4 font-bold text-cyan-400 border-r border-slate-700 text-center bg-slate-800/20">
+                                                        <tr key={pIndex} className="hover:bg-amber-50 dark:hover:bg-slate-800/30 transition-colors bg-white dark:bg-[#141414]">
+                                                            <td className="p-4 font-bold text-primary dark:text-cyan-400 border-r border-amber-200 dark:border-slate-700 text-center bg-amber-50 dark:bg-slate-800/20">
                                                                 PERIODO {pIndex + 1}
                                                             </td>
-                                                            <td className="p-4 border-r border-slate-700">
-                                                                <input 
-                                                                    type="text" 
+                                                            <td className="p-4 border-r border-amber-200 dark:border-slate-700">
+                                                                <input
+                                                                    type="text"
                                                                     value={period.from}
                                                                     onChange={(e) => updatePricing(activeCompetitor.id, selectedMonthIndex, pIndex, 'from', e.target.value)}
-                                                                    className="w-full bg-slate-900 text-center text-white font-medium rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-cyan-400 border border-slate-700 placeholder-slate-600"
+                                                                    className="w-full bg-amber-50 dark:bg-slate-900 text-center text-gray-800 dark:text-white font-medium rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-cyan-400 border border-amber-200 dark:border-slate-700 placeholder-gray-400 dark:placeholder-slate-600"
                                                                     placeholder="gg"
                                                                 />
                                                             </td>
-                                                            <td className="p-4 border-r border-slate-700">
-                                                                 <input 
-                                                                    type="text" 
+                                                            <td className="p-4 border-r border-amber-200 dark:border-slate-700">
+                                                                 <input
+                                                                    type="text"
                                                                     value={period.to}
                                                                     onChange={(e) => updatePricing(activeCompetitor.id, selectedMonthIndex, pIndex, 'to', e.target.value)}
-                                                                    className="w-full bg-slate-900 text-center text-white font-medium rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-cyan-400 border border-slate-700 placeholder-slate-600"
+                                                                    className="w-full bg-amber-50 dark:bg-slate-900 text-center text-gray-800 dark:text-white font-medium rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-cyan-400 border border-amber-200 dark:border-slate-700 placeholder-gray-400 dark:placeholder-slate-600"
                                                                     placeholder="gg"
                                                                 />
                                                             </td>
                                                             <td className="p-4">
                                                                 <div className="relative">
-                                                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">€</span>
-                                                                    <input 
-                                                                        type="number" 
+                                                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-500">€</span>
+                                                                    <input
+                                                                        type="number"
                                                                         value={period.price || ''}
                                                                         onChange={(e) => updatePricing(activeCompetitor.id, selectedMonthIndex, pIndex, 'price', e.target.value)}
-                                                                        className="w-full bg-slate-900 text-center text-white font-bold rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-cyan-400 border border-slate-700 pl-8"
+                                                                        className="w-full bg-amber-50 dark:bg-slate-900 text-center text-gray-800 dark:text-white font-bold rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-cyan-400 border border-amber-200 dark:border-slate-700 pl-8"
                                                                         placeholder="0"
                                                                     />
                                                                 </div>
@@ -450,9 +450,9 @@ const Competitors: React.FC<CompetitorsProps> = ({ availableClusters, storagePre
                                                     ))}
                                                 </tbody>
                                                 <tfoot>
-                                                    <tr className="bg-slate-800 border-t-2 border-slate-700">
-                                                        <td colSpan={3} className="p-5 text-right font-bold text-slate-300 uppercase tracking-wider text-sm">Tariffa Media Mensile</td>
-                                                        <td className="p-5 text-center font-black text-2xl text-cyan-400">
+                                                    <tr className="bg-amber-100 dark:bg-slate-800 border-t-2 border-amber-200 dark:border-slate-700">
+                                                        <td colSpan={3} className="p-5 text-right font-bold text-gray-600 dark:text-slate-300 uppercase tracking-wider text-sm">Tariffa Media Mensile</td>
+                                                        <td className="p-5 text-center font-black text-2xl text-primary dark:text-cyan-400">
                                                             {formatCurrency(calculateAverage(getPricingFor(activeCompetitor.id, selectedMonthIndex).periods))}
                                                         </td>
                                                     </tr>
